@@ -22,14 +22,29 @@
       <meta name="description" content="{{ page_description | escape }}">
     {% endif %}
 
+    {%- unless settings.type_header_font.system? and settings.type_body_font.system? -%}
+      <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
+    {%- endunless -%}
+
     {% render 'meta-tags' %}
 
     <script src="{{ 'main.js' | asset_url }}" defer="defer"></script>
-    <script defer src="https://unpkg.com/alpinejs@3.9.5/dist/cdn.min.js"></script>
 
-    {{ content_for_header }}
+    {%- unless settings.type_body_font.system? -%}
+      <link rel="preload" as="font" href="{{ settings.type_body_font | font_url }}" type="font/woff2" crossorigin>
+    {%- endunless -%}
+    {%- unless settings.type_header_font.system? -%}
+      <link rel="preload" as="font" href="{{ settings.type_header_font | font_url }}" type="font/woff2" crossorigin>
+    {%- endunless -%}
 
-    <style>
+    {{ content_for_header }} 
+
+    {% style %}
+       :root {
+        --font-body-family: {{ settings.type_body_font.family }}, {{ settings.type_body_font.fallback_families }};
+
+        --page-width: {{ settings.page_width | divided_by: 10 }}rem;
+      }
      
      *,
       *::before,
@@ -48,8 +63,10 @@
         grid-template-rows: auto auto 1fr auto;
         grid-template-columns: 100%;
         font-size: 1rem;
+        font-family: var(--font-body-family);
+
       }
-    </style>
+    {% endstyle %}
     {{ 'styles.css' | asset_url | stylesheet_tag }}
 </head>
 <body>

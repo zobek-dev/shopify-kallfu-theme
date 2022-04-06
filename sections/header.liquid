@@ -1,77 +1,105 @@
-<header class="header border-y">
-  <div class="header__logo">
-    {%- if request.page_type == 'index' -%}
-      <h1 class="header__heading">
-    {%- endif -%}
-      <a href="{{ routes.root_url }}">
-        {% if section.settings.logo != blank %}
-        {% assign image_size = section.settings.logo_width | append: 'x' %}
-        <img src="{{ section.settings.logo | img_url: image_size }}" alt="{{ shop.name }}">  
-        {% else %} 
-        {{ shop.name }}
-        {% endif %}
-      </a>
-    {%- if request.page_type == 'index' -%}
-      </h1>
-    {%- endif -%}
-  </div>
-    <div class="header__menu flex">
-      <button type="button" class="md:hidden" aria-label="{{ 'sections.header.menu' | t }}">
-         {% render 'icon-hamburger', class: 'w-7' %} 
-      </button>
-      <ul role="list" class="header__manu-nav hidden md:flex md:items-center">
-        {% for link in linklists.main-menu.links %}
-          <li>
-            {% if link.links != blank %}
-            <details-disclosure>
-              <details class="relative" id="Details-HeaderMenu-{{ forloop.index }}">
-                <summary class="flex px-5 py-4 gap-x-2 cursor-pointer uppercase tracking-[2.5px] text-[0.875rem]">
-                  <span>{{ link.title }}</span>
-                  {% render 'icon-caret', class: "w-3" %}
-                </summary>
-                <ul role="list" tabindex="-1" class="absolute top-full bg-white border border-gray-100 shadow-md min-w-[190px] px-4 py-2">
-                {% for childlink in link.links %}
-                  <li>
-                    {% if childlink.links == blank %}
-                      <a href="{{ childlink.url }}" {% if childlink.current %} aria-current="page"{% endif %} class="block py-2 px-2 cursor-pointer uppercase tracking-[2.5px] text-[0.875rem]">
-                        {{ childlink.title | escape }}
-                      </a>
-                    {% else %}
-                      <details>
-                        <summary class="flex px-5 py-4 gap-x-2 cursor-pointer uppercase tracking-[2.5px] text-[0.875rem]">
-                          <span>{{  childlink.title | escape }}</span>
-                          {% render 'icon-caret', class: "w-4" %}
-                        </summary>
-                        <ul role="list">
-                          {% for grandchild in childlink.links %}
-                          <li>
-                            <a href="{{ grandchildlink.url }}" class="block py-4 px-5 cursor-pointer uppercase tracking-[2.5px] text-[0.875rem]">
-                              {{ grandchildlink.title | escape  }}
-                            </a>  
-                          </li>
-                          {% endfor %}
-                        </ul>
-                      </details>
-                    {% endif %}
-                  </li>
-                {% endfor %}  
-                </ul> 
-              </details>
-            </details-disclosure>
-              
-            {% else %}
-               <a href="{{  link.url }}" class="block py-4 px-5 cursor-pointer uppercase tracking-[2.5px] text-[0.875rem]">
-                 <span>{{ link.title | escape }}</span>
-               </a>   
+<header class="border-y py-4">
+  <div class="page-width">
+    <div class="header">
+      <div class="header__logo flex justify-center md:justify-start">
+        {%- if request.page_type == 'index' -%}
+          <h1 class="header__heading">
+        {%- endif -%}
+          <a href="{{ routes.root_url }}">
+            {% if section.settings.logo != blank %}
+            {% assign image_size = section.settings.logo_width | append: 'x' %}
+            <img src="{{ section.settings.logo | img_url: image_size }}" alt="{{ shop.name }}">  
+            {% else %} 
+            {{ shop.name }}
             {% endif %}
-          </li>   
-        {% endfor %}
-      </ul>
-    </div>
-    <div class="header__icons">
-     icons
-    </div>
+          </a>
+        {%- if request.page_type == 'index' -%}
+          </h1>
+        {%- endif -%}
+      </div>
+      <nav class="header__menu flex" x-data>
+        <button type="button" @click="$dispatch('toggle-menu')" class="md:hidden" aria-label="{{ 'sections.header.menu' | t }}">
+           {% render 'icon-hamburger', class: 'w-6' %} 
+        </button>
+        <ul role="list" class="header__manu-nav hidden md:flex md:items-center">
+          {% for link in linklists.main-menu.links %}
+            <li>
+              {% if link.links != blank %}
+              <details-disclosure>
+                <details class="relative" id="Details-HeaderMenu-{{ forloop.index }}">
+                  <summary class="flex px-5 py-4 gap-x-2 cursor-pointer uppercase tracking-[2.5px] text-[0.875rem] hover:underline hover:underline-offset-4 text-center">
+                    <span>{{ link.title }}</span>
+                    {% render 'icon-caret', class: "w-3" %}
+                  </summary>
+                  <ul role="list" tabindex="-1" class="absolute top-full bg-white border border-gray-100 shadow-md min-w-[190px] py-2">
+                  {% for childlink in link.links %}
+                    <li>
+                      {% if childlink.links == blank %}
+                        <a href="{{ childlink.url }}" {% if childlink.current %} aria-current="page"{% endif %} class="block py-2 px-4 cursor-pointer uppercase tracking-[2.5px] text-[0.875rem]  hover:bg-gray-100">
+                          {{ childlink.title | escape }}
+                        </a>
+                      {% else %}
+                        <details>
+                          <summary class="flex px-4 py-4 gap-x-2 cursor-pointer uppercase tracking-[2.5px] text-[0.875rem]  hover:bg-gray-100">
+                            <span>{{  childlink.title | escape }}</span>
+                            {% render 'icon-caret', class: "w-4" %}
+                          </summary>
+                          <ul role="list">
+                            {% for grandchild in childlink.links %}
+                            <li>
+                              <a href="{{ grandchildlink.url }}" class="block py-4 px-4 cursor-pointer uppercase tracking-[2.5px] text-[0.875rem] hover:bg-gray-100">
+                                {{ grandchildlink.title | escape  }}
+                              </a>  
+                            </li>
+                            {% endfor %}
+                          </ul>
+                        </details>
+                      {% endif %}
+                    </li>
+                  {% endfor %}  
+                  </ul> 
+                </details>
+              </details-disclosure>
+                
+              {% else %}
+                 <a href="{{  link.url }}" class="block py-4 px-5 cursor-pointer uppercase tracking-[2.5px] text-[0.875rem] hover:underline hover:underline-offset-4 text-center">
+                   <span>{{ link.title | escape }}</span>
+                 </a>   
+              {% endif %}
+            </li>   
+          {% endfor %}
+        </ul>
+      </nav>
+      <div class="header__icons flex justify-end items-center gap-4"
+        x-data="{ cart_count: {{ cart.item_count }} }"
+        @cart-count-updated.window="cart_count = $event.detail"
+      >
+        <details>
+          <summary class="flex justify-center items-center cursor-pointer">
+            {% render 'icon-search', class:'w-6 hover:scale-105' %}
+            {% render 'icon-close', class:'w-6 hidden hover:scale-105'%}
+          </summary>
+          <div>
+
+          </div>
+        </details>
+        <button 
+         type="button"
+         title="Cart button"
+         @click="$dispatch('toggle-cart')"
+         class="header__icon text-center relative"
+        >
+          {% render 'icon-cart', class: 'w-6' %}
+          <span class="sr-only">{{ 'templates.cart.cart' | t }}</span>
+          <span x-text="cart_count" class="cart__count min-w-[14px] text-[10px] min-h-[14px] absolute grid place-content-center rounded-full -top-3 -right-1 text-white bg-black"> {{ cart.item_count }} </span>
+        </button>
+      </div>
+    </div>  
+  </div>
 </header>
+
+{% render 'drawer-menu', linklists: linklists %}
+{% render 'drawer-cart' %}
 
 
 

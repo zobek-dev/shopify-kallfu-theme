@@ -1,0 +1,152 @@
+<div class="fixed inset-0 overflow-hidden z-20"
+    x-data="{ showMenu: false }"
+    x-show="showMenu"
+    @toggle-menu.window="showMenu = !showMenu"
+     aria-labelledby="slide-over-title" role="dialog" aria-modal="true">
+    <div class="absolute inset-0 overflow-hidden">
+      
+      <div class="absolute inset-0 bg-gray-500 bg-opacity-75" x-show="showMenu" x-transition.opacity @click="showMenu = false" aria-hidden="true"></div>
+      <div class="fixed inset-y-0 left-0 max-w-[480px] flex">
+       
+        <div class="relative w-screen max-w-xs md:max-w-md" 
+            x-show="showMenu"
+            x-transition:enter="transform transition ease-in-out duration-500 sm:duration-700" 
+            x-transition:enter-start="-translate-x-full opacity-0" 
+            x-transition:enter-end="translate-x-0 opacity-100" 
+            x-transition:leave="transform transition ease-in-out duration-500 sm:duration-700" 
+            x-transition:leave-start="translate-x-0" 
+            x-transition:leave-end="-translate-x-full opacity-0"
+            >
+  
+            <div class="h-full flex flex-col justify-between w-full overflow-y-scroll bg-white py-6">
+                <header class="flex justify-end items-center px-4">
+                    <button @click="showMenu = false">
+                        {% render 'icon-close', class:"w-4" %}
+                        <span class="sr-only">
+                            Cerrar el menú
+                        </span>
+                    </button>
+                </header>
+                <ul role="list">
+                    {% for link in linklists.main-menu.links %}
+                        <li>
+                            {% if link.links != blank %}
+                                <details>
+                                    <summary class="flex px-6 py-3 uppercase tracking-[2.5px] text-[0.875rem] justify-between cursor-pointer hover:bg-gray-100">
+                                        {{ link.title | escape }}
+                                        {% render 'icon-caret', class: "w-3" %}
+                                    </summary>
+                                    <ul>
+                                     {% for childlink in link.links %}
+                                         <li>
+                                            {% if childlink.links == blank %}
+                                            <a href="{{ childlink.url}}" class="flex px-8 py-3 tracking-[2.5px] text-[0.875rem] hover:bg-gray-100">
+                                               {{ childlink.title | escape }}
+                                            </a>
+                                            {% else %}
+                                            <details>
+                                                <summary class="flex px-8 py-3 tracking-[2.5px] text-[0.875rem] justify-between cursor-pointer hover:bg-gray-100">
+                                                    {{ childlink.title | escape }}
+                                                    {% render 'icon-caret', class: "w-3" %}
+                                                </summary>
+                                                <ul>
+                                                    {% for grandchildlink in childlink.links %}
+                                                        <a href="{{ grandchildlink.url }}" class="flex px-8 py-3 tracking-[2.5px] text-[0.875rem] hover:bg-gray-100">
+                                                            {{  grandchildlink.title | escape }}
+                                                        </a>
+                                                    {% endfor %}      
+                                                </ul>
+                                            </details>
+                
+                                            {% endif %}
+                                         </li>
+                                     {% endfor %}       
+                                    </ul>
+                                </details>
+                            {% else %}
+                                <a href="{{ link.url}}" class="flex px-6 py-3 uppercase tracking-[2.5px] text-[0.875rem] hover:bg-gray-100">
+                                    {{ link.title | escape }}
+                                </a>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+                <ul role="list" class="flex mx-4 gap-x-4 items-center">
+                    {%- if settings.social_twitter_link != blank -%}
+                      <li class="list-social__item">
+                        <a href="{{ settings.social_twitter_link }}" class="list-social__link link">
+                          {%- render 'icon-twitter', class:'w-[1.180625rem] h-[1.180625rem]' -%}
+                          <span class="sr-only">{{ 'general.social.links.twitter' | t }}</span>
+                        </a>
+                      </li>
+                    {%- endif -%}
+                    {%- if settings.social_facebook_link != blank -%}
+                      <li class="list-social__item">
+                        <a href="{{ settings.social_facebook_link }}" class="list-social__link link">
+                          {%- render 'icon-facebook', class:'w-[1.180625rem] h-[1.180625rem]' -%}
+                          <span class="sr-only">{{ 'general.social.links.facebook' | t }}</span>
+                        </a>
+                      </li>
+                    {%- endif -%}
+                    {%- if settings.social_pinterest_link != blank -%}
+                      <li class="list-social__item">
+                        <a href="{{ settings.social_pinterest_link }}" class="list-social__link link">
+                          {%- render 'icon-pinterest', class:'w-[1.180625rem] h-[1.180625rem]' -%}
+                          <span class="sr-only">{{ 'general.social.links.pinterest' | t }}</span>
+                        </a>
+                      </li>
+                    {%- endif -%}
+                    {%- if settings.social_instagram_link != blank -%}
+                      <li class="list-social__item">
+                        <a href="{{ settings.social_instagram_link }}" class="list-social__link link">
+                          {%- render 'icon-instagram', class:'w-[1.180625rem] h-[1.180625rem]' -%}
+                          <span class="sr-only">{{ 'general.social.links.instagram' | t }}</span>
+                        </a>
+                      </li>
+                    {%- endif -%}
+                    {%- if settings.social_tiktok_link != blank -%}
+                      <li class="list-social__item">
+                        <a href="{{ settings.social_tiktok_link }}" class="list-social__link link">
+                          {%- render 'icon-tiktok', class:'w-[1.180625rem] h-[1.180625rem]' -%}
+                          <span class="sr-only">{{ 'general.social.links.tiktok' | t }}</span>
+                        </a>
+                      </li>
+                    {%- endif -%}
+                    {%- if settings.social_tumblr_link != blank -%}
+                      <li class="list-social__item">
+                        <a href="{{ settings.social_tumblr_link }}" class="list-social__link link">
+                          {%- render 'icon-tumblr', class:'w-[1.180625rem] h-[1.180625rem]' -%}
+                          <span class="sr-only">{{ 'general.social.links.tumblr' | t }}</span>
+                        </a>
+                      </li>
+                    {%- endif -%}
+                    {%- if settings.social_snapchat_link != blank -%}
+                      <li class="list-social__item">
+                        <a href="{{ settings.social_snapchat_link }}" class="list-social__link link">
+                          {%- render 'icon-snapchat', class:'w-[1.180625rem] h-[1.180625rem]' -%}
+                          <span class="sr-only">{{ 'general.social.links.snapchat' | t }}</span>
+                        </a>
+                      </li>
+                    {%- endif -%}
+                    {%- if settings.social_youtube_link != blank -%}
+                      <li class="list-social__item">
+                        <a href="{{ settings.social_youtube_link }}" class="list-social__link link">
+                          {%- render 'icon-youtube', class:'w-[1.180625rem] h-[1.180625rem]' -%}
+                          <span class="sr-only">{{ 'general.social.links.youtube' | t }}</span>
+                        </a>
+                      </li>
+                    {%- endif -%}
+                    {%- if settings.social_vimeo_link != blank -%}
+                      <li class="list-social__item">
+                        <a href="{{ settings.social_vimeo_link }}" class="list-social__link link">
+                          {%- render 'icon-vimeo', class:'w-[1.180625rem] h-[1.180625rem]' -%}
+                          <span class="sr-only">{{ 'general.social.links.vimeo' | t }}</span>
+                        </a>
+                      </li>
+                    {%- endif -%}
+                </ul>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>

@@ -3,9 +3,9 @@
         "main": {
             "type": "main-product",
             "settings": {}
-        },
-        "order": [
-            "main"
-        ]
-    }
+        }    
+    },
+    "order": [
+        "main"
+    ]
 }

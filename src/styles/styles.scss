@@ -5,7 +5,8 @@
 .header{
     display:grid;
     grid-template-areas: "header-logo header-menu header-icons";
-    grid-template-columns: 1fr 2fr 1fr ;
+    grid-template-columns: 1fr 4fr 1fr ;
+    align-items: center;
 
     .header__logo{
         grid-area: header-logo;
@@ -16,13 +17,37 @@
     .header__icons{
         grid-area: header-icons;
     }
-
+    @media(max-width: 1200){
+        grid-template-columns: 1fr 2fr 1fr ;
+    }
     @media(max-width: 768px){
         grid-template-areas: "header-menu header-logo header-icons";
     }
 }
 
 
-details[open] > summary > svg{
+details[open] > summary > svg.icon-caret{
     transform: rotate(180deg);
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+#MenuDrawer-Container{
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+#MenuDrawer-Container::-webkit-scrollbar{
+  display:none;  
+}
+
+.page-width{
+  max-width: var(--page-width);
+  margin: 0 auto;
+  padding: 0 1.5rem;
+
+    @media screen and (min-width: 750px) {
+        padding: 0 5rem;
+    }
+  
 }
