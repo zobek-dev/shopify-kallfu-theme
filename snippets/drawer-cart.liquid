@@ -3,7 +3,7 @@
         showCartDrawer: false,
         loading: false,
         updateCart(){
-            // send fetch reqeust to update cart
+            // send fetch request to update cart
             fetch('/?view=cart')
             .then(response => response.text())
             .then(cartData => {

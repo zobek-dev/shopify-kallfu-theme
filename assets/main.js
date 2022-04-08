@@ -1,6 +1,6 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
-/******/ 	var __webpack_modules__ = ({ 
+/******/ 	var __webpack_modules__ = ({
 
 /***/ "./node_modules/alpinejs/dist/module.esm.js":
 /*!**************************************************!*\

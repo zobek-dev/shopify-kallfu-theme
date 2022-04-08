@@ -1,8 +1,46 @@
 <h1>{{ product.title }}</h1>
-<form action="/cart/add">
-    <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
-    <input type="hidden" name="quantity" value="1">
-    <button type="submit">
-        Add to cart
-    </button>
-</form>
+<div x-data="{ 
+        qty: 1,
+        addToCart(){
+            let formData = new FormData($refs.product_form);
+            fetch('/cart/add.js', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(response =>{
+                this.$dispatch('cart-updated');
+                this.$dispatch('toggle-cart');
+            })            
+            .catch((error) => console.error('Error', error));
+        }
+    }">
+    {% assign id_name = 'add-to-cart-' | append: product.handle | append: '-' | append: collection.handle | append: '-' | append: section.id %}
+    <form 
+        method="post" 
+        action="{{ routes.add_to_cart }}" 
+        id="{{ id_name }}" 
+        accept-charset="UTF-8" 
+        class="form" 
+        enctype="multipart/form-data" 
+        novalidate="novalidate" 
+        x-ref="product_form"
+        @submit.prevent="addToCart()"
+    >
+        <input type="hidden" name="form_type" value="product">
+        <input type="hidden" name="utf8" value="✓">
+        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+        <input type="hidden" name="quantity" value="1">
+        <button 
+            type="submit"
+            name="add"    
+        >
+            Add to cart
+        </button>
+    </form>
+</div>
+
+
+{% comment %}
+, @submit: '(e) => addToCart(e)'
+{% endcomment %}

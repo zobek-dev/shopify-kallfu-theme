@@ -43,7 +43,7 @@
        :root {
         --font-body-family: {{ settings.type_body_font.family }}, {{ settings.type_body_font.fallback_families }};
 
-        --page-width: {{ settings.page_width | divided_by: 10 }}rem;
+        --page-width: {{ settings.page_width }}px;
       }
      
      *,
@@ -64,6 +64,7 @@
         grid-template-columns: 100%;
         font-size: 1rem;
         font-family: var(--font-body-family);
+        color: #121212;
 
       }
     {% endstyle %}
