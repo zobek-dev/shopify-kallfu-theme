@@ -1,7 +1,7 @@
 <header class="border-y py-4">
   <div class="page-width">
     <div class="header">
-      <div class="header__logo flex justify-center md:justify-start">
+      <div class="header__logo flex justify-center lg:justify-start">
         {%- if request.page_type == 'index' -%}
           <h1 class="header__heading">
         {%- endif -%}
@@ -18,10 +18,10 @@
         {%- endif -%}
       </div>
       <nav class="header__menu flex" x-data>
-        <button type="button" @click="$dispatch('toggle-menu')" class="md:hidden" aria-label="{{ 'sections.header.menu' | t }}">
+        <button type="button" @click="$dispatch('toggle-menu')" class="lg:hidden" aria-label="{{ 'sections.header.menu' | t }}">
            {% render 'icon-hamburger', class: 'w-6' %} 
         </button>
-        <ul role="list" class="header__manu-nav hidden md:flex md:items-center">
+        <ul role="list" class="header__manu-nav hidden lg:flex lg:items-center">
           {% for link in linklists.main-menu.links %}
             <li>
               {% if link.links != blank %}
@@ -71,16 +71,77 @@
         </ul>
       </nav>
       <div class="header__icons flex justify-end items-center gap-4"
-        x-data="{ cart_count: {{ cart.item_count }} }"
+        x-data="{ 
+          cart_count: {{ cart.item_count }},
+          search_query: '',
+          selectInput(){
+            $nextTick(() =>{
+              $refs.search_bar.focus();
+            })
+          }, 
+          search(e){
+            const searchTerm = e.target.value.trim();
+            $refs.predictive_search.innerHTML = '';
+            if(searchTerm === '') return;
+            
+            fetch(`/search/suggest?q=${searchTerm}&resources[type]=product&resources[limit]=4&section_id=predictive-search`)
+            .then((response)=> {
+              if(!response.ok){
+                let error = new Error(response.status);
+                throw error;
+              }
+              return response.text();
+            })
+            .then((text) => {
+              const resultsMarkup = new DOMParser().parseFromString(text, 'text/html').querySelector('#shopify-section-predictive-search').innerHTML;
+              const div = document.createElement('div');
+              div.innerHTML = resultsMarkup;
+              $refs.predictive_search.appendChild(div);
+            })
+            .catch((error) => {
+              throw error;
+            })
+          },
+          onKeyup(e){
+            if(e.key === 'Escape'){
+              $refs.search.removeAttribute('open');
+            }
+          }
+        }"
         @cart-count-updated.window="cart_count = $event.detail"
       >
-        <details>
-          <summary class="flex justify-center items-center cursor-pointer">
+        <details x-ref="search" @keyup="onKeyup">
+          <summary class="flex justify-center items-center cursor-pointer" @click="selectInput()">
             {% render 'icon-search', class:'w-6 hover:scale-105' %}
-            {% render 'icon-close', class:'w-6 hidden hover:scale-105'%}
           </summary>
-          <div>
-
+          <div class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 z-10" id="searchLayout">
+            <div class="block bg-white w-full py-6">
+              <div class="page-width">
+                <div class="mx-auto flex justify-between items-center max-w-[700px] w-[100%]">
+                  <form action="{{ routes.search_url }}" class="w-[100%]" role="search">
+                    <div class="px-2 py-2 border-2 border-gray-400 flex items-center rounded focus-within:border-gray-800 focus-within:border-2 gap-2 w-[90%] relative">
+                      <button type="submit">
+                        {% render 'icon-search', class: 'w-6'%}
+                      </button>
+                      <input type="search"
+                        placeholder="Buscar en la tienda"
+                        name="q"
+                        class="input-search w-[100%]"
+                        autocomplete="off"
+                        @input.debounce.500ms="search"
+                        x-ref="search_bar"
+                      >
+                      <input type="hidden" name="options[prefix]" value="last" aria-hidden="true">
+                      <div x-ref="predictive_search" class="absolute top-[45px] left-0 w-full"></div>
+                    </div>
+                  </form>  
+                  <button title="Cerrar la barra de búsqueda" @click="$refs.search.removeAttribute('open')" class="hover:scale-105">
+                    {% render 'icon-close', class: 'w-6 ' %}
+                    <span class="sr-only">Cerrar la barra de búsqueda</span>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </details>
         <button 
@@ -97,6 +158,14 @@
     </div>  
   </div>
 </header>
+
+<script>
+  window.addEventListener("click", e => {
+    if(e.target.matches("#searchLayout")){
+    document.querySelector('[x-ref="search"]').removeAttribute('open');
+    } 
+  })
+</script>
 
 {% render 'drawer-menu', linklists: linklists %}
 {% render 'drawer-cart' %}

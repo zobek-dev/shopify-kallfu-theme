@@ -3010,6 +3010,55 @@ var DetailsDisclosure = /*#__PURE__*/function (_HTMLElement) {
 
 /***/ }),
 
+/***/ "./src/js/components/Slider.js":
+/*!*************************************!*\
+  !*** ./src/js/components/Slider.js ***!
+  \*************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (function () {
+  return {
+    skip: 1,
+    next: function next() {
+      var _this = this;
+
+      this.to(function (current, offset) {
+        return current + offset * _this.skip;
+      });
+    },
+    prev: function prev() {
+      var _this2 = this;
+
+      this.to(function (current, offset) {
+        return current - offset * _this2.skip;
+      });
+    },
+    to: function to(strategy) {
+      var slider = this.$refs.slider;
+      var current = slider.scrollLeft;
+      var offset = slider.firstElementChild.getBoundingClientRect().width;
+      slider.scrollTo({
+        left: strategy(current, offset),
+        behavior: 'smooth'
+      });
+    },
+    focusableWhenVisible: {
+      'x-intersect:enter': function xIntersectEnter() {
+        this.$el.removeAttribute('tabindex');
+      },
+      'x-intesect:leave': function xIntesectLeave() {
+        this.$el.setAttribute('tabindex', '-1');
+      }
+    }
+  };
+});
+
+/***/ }),
+
 /***/ "./src/js/main.js":
 /*!************************!*\
   !*** ./src/js/main.js ***!
@@ -3019,10 +3068,13 @@ var DetailsDisclosure = /*#__PURE__*/function (_HTMLElement) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var alpinejs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! alpinejs */ "./node_modules/alpinejs/dist/module.esm.js");
 /* harmony import */ var _components_DetailsDisclosure_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/DetailsDisclosure.js */ "./src/js/components/DetailsDisclosure.js");
+/* harmony import */ var _components_Slider_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/Slider.js */ "./src/js/components/Slider.js");
+
 
  //AlpineJs definition
 
 window.Alpine = alpinejs__WEBPACK_IMPORTED_MODULE_0__["default"];
+alpinejs__WEBPACK_IMPORTED_MODULE_0__["default"].data('Slider', _components_Slider_js__WEBPACK_IMPORTED_MODULE_2__["default"]);
 alpinejs__WEBPACK_IMPORTED_MODULE_0__["default"].start(); //custom elements definitions
 
 customElements.define("details-disclosure", _components_DetailsDisclosure_js__WEBPACK_IMPORTED_MODULE_1__["default"]);

@@ -2,6 +2,35 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+    .btn-black {
+        @apply py-3 px-6 text-center text-sm uppercase block bg-[#121212] text-white tracking-[2.5px] border border-[#121212] hover:opacity-[0.7]
+    }
+
+    .btn-transparent{
+        @apply py-3 px-6 text-center text-sm uppercase block bg-white text-[#121212] tracking-[2.5px] border border-[#121212] hover:opacity-[0.7]
+    }
+
+    .collapsible-tab{
+        @apply border-b border-gray-300 border-t; 
+    }
+    .collapsible-tab + .collapsible-tab{
+        @apply border-t-0;
+    }
+}
+@layer utilities {
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    input[type=number] {
+      -moz-appearance: textfield;
+    }
+
+}
+
 .header{
     display:grid;
     grid-template-areas: "header-logo header-menu header-icons";
@@ -17,10 +46,12 @@
     .header__icons{
         grid-area: header-icons;
     }
-    @media(max-width: 1200){
-        grid-template-columns: 1fr 2fr 1fr ;
+
+    @media(max-width:1300px){
+        grid-template-columns: 1fr 2fr 1fr ; 
     }
-    @media(max-width: 768px){
+    @media(max-width: 1024px){
+       
         grid-template-areas: "header-menu header-logo header-icons";
     }
 }
@@ -50,4 +81,31 @@ details[open] > summary > svg.icon-caret{
         padding: 0 5rem;
     }
   
+}
+
+.input-search:focus{
+    border-color:transparent;
+    outline:none;
+}
+
+.description{
+    h1{
+        font-size:18px;
+        font-weight:bold;
+        text-transform: uppercase;
+        margin-bottom:1rem;
+        line-height: 1.2;
+    }
+    p{
+        margin-bottom:1rem;
+    }
+}
+
+div[x-ref=slider]::-webkit-scrollbar{
+    display: none;
+}
+
+div[x-ref=slider]{
+    -ms-overflow-style: none;  
+    scrollbar-width: none; 
 }

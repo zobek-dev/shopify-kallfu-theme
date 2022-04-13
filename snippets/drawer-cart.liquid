@@ -1,50 +1,57 @@
 <div class="fixed inset-0 overflow-hidden z-20"
-    x-data="{ 
-        showCartDrawer: false,
-        loading: false,
-        updateCart(){
-            // send fetch request to update cart
-            fetch('/?view=cart')
-            .then(response => response.text())
-            .then(cartData => {
-                $refs.cart_content.innerHTML = cartData;
-                // This code is use to parse json object. for cart count
-                var el = document.createElement('div');
-                el.innerHTML = cartData;
-                var cartCount = JSON.parse(el.querySelector('[data-options]').innerHTML).item_count;
-                $dispatch('cart-count-updated', cartCount);
-                this.loading = false;
-            })
+  x-data="{ 
+      showCartDrawer: false,
+      loading: false,
+      updateCart(e){
+          // send fetch request to update cart
+          e.preventDefault();
+          fetch('/?view=cart')
+          .then(response => response.text())
+          .then(cartData => {
+              $refs.cart_content.innerHTML = cartData;
+              // This code is use to parse json object. for cart count
+              const el = document.createElement('div');
+              el.innerHTML = cartData;
+              const cartCount = JSON.parse(el.querySelector('[data-options]').innerHTML).item_count;
+              $dispatch('cart-count-updated', cartCount);
+              this.loading = false;
+          })
+      },
+      onKeyup(e){
+        if(e.key === 'Escape'){
+          $dispatch('cart-updated');
         }
-     }"
-    x-show="showCartDrawer"
-    @cart-updated.window="updateCart;"
-    @toggle-cart.window="showCartDrawer = !showCartDrawer"
-     aria-labelledby="slide-over-title" role="dialog" aria-modal="true">
-    <div class="absolute inset-0 overflow-hidden">
-      
-      <div class="absolute inset-0 bg-gray-500 bg-opacity-75" x-show="showCartDrawer" x-transition.opacity @click="showCartDrawer = false" aria-hidden="true"></div>
-      <div class="fixed inset-y-0 right-0 max-w-full flex">
-       
-        <div class="relative w-screen max-w-xs md:max-w-md" 
-            x-show="showCartDrawer"
-            x-transition:enter="transform transition ease-in-out duration-500 sm:duration-700" 
-            x-transition:enter-start="translate-x-full opacity-0" 
-            x-transition:enter-end="translate-x-0 opacity-100" 
-            x-transition:leave="transform transition ease-in-out duration-500 sm:duration-700" 
-            x-transition:leave-start="translate-x-0" 
-            x-transition:leave-end="translate-x-full opacity-0"
-            >
-          <div class="absolute top-0 left-0 -ml-8 pt-4 pr-2 flex sm:-ml-10 sm:pr-4">
-          </div>
-          
-          {% render 'loader' %}
-
-          <div class="h-full flex flex-col bg-white shadow-xl overflow-y-scroll" x-ref="cart_content">
-            {% render 'cart-form' %}
-          </div>
+      }
+   }"
+  x-show="showCartDrawer"
+  @cart-updated.window="updateCart"
+  @toggle-cart.window="showCartDrawer = !showCartDrawer"
+  aria-labelledby="slide-over-title" 
+  role="dialog" 
+  aria-modal="true"
+>
+  <div class="absolute inset-0 overflow-hidden">
+    
+    <div class="absolute inset-0 bg-gray-500 bg-opacity-75" x-show="showCartDrawer" x-transition.opacity @click="$dispatch('toggle-cart')" aria-hidden="true"  @keyup="onKeyup"></div>
+    <div class="fixed inset-y-0 right-0 max-w-full flex">
+     
+      <div class="relative w-screen max-w-xs md:max-w-md" 
+          x-show="showCartDrawer"
+          x-transition:enter="transform transition ease-in-out duration-500 sm:duration-700" 
+          x-transition:enter-start="translate-x-full opacity-0" 
+          x-transition:enter-end="translate-x-0 opacity-100" 
+          x-transition:leave="transform transition ease-in-out duration-500 sm:duration-700" 
+          x-transition:leave-start="translate-x-0" 
+          x-transition:leave-end="translate-x-full opacity-0"
+          >
+        <div class="absolute top-0 left-0 -ml-8 pt-4 pr-2 flex sm:-ml-10 sm:pr-4"></div>
+        
+        {% render 'loader' %}
+        <div class="h-full flex flex-col bg-white shadow-xl overflow-y-scroll" x-ref="cart_content">
+          {% render 'cart-form' %}
         </div>
       </div>
     </div>
+  </div>
 </div>
   

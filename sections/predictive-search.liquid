@@ -1,38 +1,28 @@
 {%- if predictive_search.performed -%}
-  <div id="predictive-search-results">
-    {%- if predictive_search.resources.products.size > 0 -%}
-      <h3 id="predictive-search-products" class="predictive-search__heading">
-        Products
-      </h3>
-    {%- endif -%}
-    <ul id="predictive-search-results-list" class="predictive-search__results-list" role="listbox" aria-labelledby="predictive-search-products">
+  <div id="predictive-search-results" class="w-full bg-white shadow-md border border-gray-400 rounded">
+    <ul role="listbox" aria-labelledby="predictive-search-products">
       {%- for product in predictive_search.resources.products -%}
-        <li class="predictive-search__list-item" role="option">
-          <a href="{{ product.url }}" class="predictive-search__item" tabindex="-1">
+        <li class="py-4 px-4 border-b border-gray-100 hover:bg-gray-100">
+          <a href="{{ product.url }}" class="flex items-center gap-4" tabindex="-1">
             {%- if product.featured_media != blank -%}
-              <img class="predictive-search__image"
-                src="{{ product.featured_media | img_url: '150x' }}"
-                alt="{{ product.featured_media.alt }}"
-                width="50"
-                height="{{ 50 | divided_by: product.featured_media.preview_image.aspect_ratio }}"
+            <div class="border border-gray-100 rounded overflow-hidden">
+              <img 
+              src="{{ product.featured_media | img_url: '150x' }}"
+              alt="{{ product.featured_media.alt }}"
+              width="50"
+              height="{{ 50 | divided_by: product.featured_media.preview_image.aspect_ratio }}"
               >
+            </div>
             {%- endif -%}
-            <div class="predictive-search__item-content">
-              {%- if settings.predictive_search_show_vendor -%}
-                <span class="visually-hidden">Vendor</span>
-                <div class="predictive-search__item-vendor">{{ product.vendor }}</div>
-              {%- endif -%}
-              <span class="predictive-search__item-heading">{{ product.title }}</span>
-              {%- if settings.predictive_search_show_price -%}
-                {% comment %}Render price{% endcomment %}
-              {%- endif -%}
+            <div class="tracking-[2.5px] text-xs md:text-sm uppercase">
+              <span>{{ product.title }}</span>
             </div>
           </a>
         </li>
       {%- endfor -%}
-      <li class="predictive-search__list-item" role="option">
-        <button class="predictive-search__item" tabindex="-1">
-          Search for “{{ predictive_search.terms }}”
+      <li class="py-4 px-4 hover:bg-gray-100 border-t border-gray-400" role="option">
+        <button type="submit" class="text-sm tracking-[2.5px]" tabindex="-1">
+          Buscar para <span class="text-undeline font-bold">“{{ predictive_search.terms }}”</span>
         </button>
       </li>
     </ul>

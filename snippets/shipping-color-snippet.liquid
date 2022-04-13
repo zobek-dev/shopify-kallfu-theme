@@ -1,0 +1,42 @@
+
+{% liquid 
+    assign main_tag = "" 
+    for tag in tags 
+        if tag contains "DExpress"
+            assign main_tag = "DExpress" 
+            assign color = "#008000"
+        elsif tag contains "5days"
+            assign main_tag = "5days" 
+            assign color = "#E5Ab5A"
+        elsif tag contains "10days"
+            assign main_tag = "10days" 
+            assign color = "#ff0000"        
+        endif
+    endfor 
+%}
+
+<style>
+    #trafficColor-{{ product_id }}{
+        display:block !important;
+        background-color: {{ color }};
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+    }
+</style>
+{% if main_tag != "" %}
+<div class="flex gap-2 py-2" data-color="{{ color }}" data-tag="{{ main_tag }}">
+    {% render 'icon-shipping' %}
+    <div id="trafficColor-{{ product_id }}"></div>
+    <p class="{{ size }} uppercase tracking-[2.5px]">
+        {% case main_tag %}
+        {% when 'DExpress' %}
+        Express - 48 horas hábiles
+        {% when '5days' %}
+        5 - 10 días hábiles
+        {% when '10days'%}
+        10 - 15 días hábiles
+        {% endcase %}
+    </p>
+</div>
+{% endif %}
