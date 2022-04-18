@@ -1,0 +1,39 @@
+<div class="page-width tracking-[1.5px]" id="ProductDetails">
+    <h2 class="text-center text-2xl uppercase  font-bold tracking-[2.5px] my-[1rem]">
+      Detalle Producto  
+    </h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 items-center">
+        <div>
+            {% if product.metafields.my_fields.imagen_medida != blank %}
+                <img src="{{ product.metafields.my_fields.imagen_medida }}" loading="lazy" alt="dimensiones del producto">   
+            {% else %}
+                 {{ 'product-1' | placehholder_svg_tag }}   
+            {% endif %}
+        </div>
+        <div>
+            <h3 class="text-lg uppercase tracking-[2.5px] font-bold">Medidas</h3>
+            <ul class="mb-[1rem]">
+                <li class="border-b border-[#121212] uppercase py-4">Largo: {{  product.metafields.my_fields.detalle_largo }}</li>
+                <li class="border-b border-[#121212] uppercase py-4">Ancho: {{ product.metafields.my_fields.detalle_ancho }}</li>
+                <li class="border-b border-[#121212] uppercase py-4">Alto: {{ product.metafields.my_fields.detalle_alto }}</li>
+            </ul>
+            <h3 class="text-lg uppercase tracking-[2.5px] font-bold mb-[0.5rem]">Armado</h3>
+            <p class="mb-[1rem]">Cada uno de nuestros productos se entrega completamente armado, su cubierta va ensamblada a su estructura de base rígida permitiéndole ser un mueble resistente y robusto. De esta manera solo tendrás la necesidad de ubicarlo en el espacio que más te guste de tu hogar, decorar y disfrutar de nuestro producto.</p>
+        </div>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-[1rem] items-center product-details">
+        <div class="material-text">
+            <h3 class="text-lg uppercase tracking-[2.5px] font-bold my-[0.5rem]">Materiales y Calidad</h3>
+            <p>
+                {{ product.metafields.my_fields.texto_materiales_y_calidad }}
+            </p>
+            <h3 class="text-lg uppercase tracking-[2.5px] font-bold my-[0.5rem]">Handmade</h3>
+            <p>
+                Nuestros productos son fabricados manualmente por nuestro propio equipo, buscando el equilibrio perfecto entre diseño, funcionalidad y estilo. Preocupándonos de cada detalle en su proceso de fabricación y que llegue a la puerta del hogar de cada cliente en perfectas condiciones.
+            </p>
+        </div>
+        <div class="material-img">
+            <img src="{{ product.metafields.my_fields.imagen_materiales }}" alt="" width="100%">
+        </div>
+    </div>
+</div>

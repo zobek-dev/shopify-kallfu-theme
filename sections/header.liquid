@@ -31,7 +31,7 @@
                     <span>{{ link.title }}</span>
                     {% render 'icon-caret', class: "w-3" %}
                   </summary>
-                  <ul role="list" tabindex="-1" class="absolute top-full bg-white border border-gray-100 shadow-md min-w-[190px] py-2">
+                  <ul role="list" tabindex="-1" class="absolute top-full bg-white border border-gray-100 shadow-md min-w-[190px] py-2 z-10">
                   {% for childlink in link.links %}
                     <li>
                       {% if childlink.links == blank %}

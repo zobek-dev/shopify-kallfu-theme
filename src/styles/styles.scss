@@ -109,3 +109,19 @@ div[x-ref=slider]{
     -ms-overflow-style: none;  
     scrollbar-width: none; 
 }
+
+.product-details{
+   grid-template-areas: "material-text material-img";
+   @media(max-width:768px){
+        grid-template-areas: "material-img"
+                             "material-text";
+   }    
+}
+
+.material-text{
+    grid-area: material-text;
+}
+
+.material-img{
+    grid-area: material-img;
+}
