@@ -1,0 +1,28 @@
+<a href="{{ product.url }}">
+    <div class="card w-full">
+        <div class="w-full relative">
+            <img
+            class="product__img"
+            src="{{ product.featured_image | image_url: width: 300 }}"
+            alt="{{ product.featured_image.alt }}"
+            loading="lazy"
+            width="100%"
+            />
+        </div>
+        <div class="py-4 px-4">
+            {% render 'shipping-color-snippet', tags: product.tags, size: 'text-[10px]', product_id: product.selected_or_first_available_variant.id %}
+            <p class="uppercase tracking-[1.5px] text-sm mb-2">{{ product.title }}</p>
+            
+            {% if product.price < product.compare_at_price_max %}
+            <div class="flex gap-4 items-center">
+                <p class="text-xl tracking-[1.5px] font-bold">{{ product.price | money}}</p>
+                <s class="text-xs">{{ product.compare_at_price_max | money }}</s>       
+            </div>
+            {% else %}
+            <div class="flex">
+                <p class="text-xl tracking-[1.5px] font-bold">{{ product.price | money}}</p>   
+            </div>    
+            {% endif %}     
+        </div>
+    </div>
+</a>

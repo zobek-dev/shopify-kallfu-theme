@@ -65,18 +65,19 @@
         font-size: 1rem;
         font-family: var(--font-body-family);
         color: #121212;
-
+        scroll-behavior: smooth;
       }
+
+
     {% endstyle %}
     {{ 'styles.css' | asset_url | stylesheet_tag }}
 </head>
-<body>
-  {% section 'header' %}
-  <main>
-    {{ content_for_layout }}
-  </main>
-  {% section 'footer' %}
-
+<body data-scroller>   
+    {% section 'header' %}
+    <main data-main>
+      {{ content_for_layout }}
+    </main>
+    {% section 'footer' %}
   <script>
     window.shopUrl = '{{ request.origin }}';
     window.routes = {

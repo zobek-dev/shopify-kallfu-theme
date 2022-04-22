@@ -9,20 +9,28 @@
     <span aria-hidden>></span>
     <span class="sr-only">Siguiente</span>
   </button>
-  <div class="flex sm:hidden overflow-x-scroll gap-3 relative snap-x snap-mandatory"  x-ref="slider">        
+  <div class="flex sm:hidden overflow-x-scroll gap-3 relative snap-x snap-mandatory"  x-ref="slider">
+    {% render 'breadcrumb' %}        
     {% for media in product.media %}
        {% case media.media_type %} 
        {% when 'image' %}
        <div class="w-full snap-start flex-shrink-0">
          {{ media | image_url: width:800 | image_tag: loading: 'lazy' }}
        </div>
-       {% when 'video' %} 
-       <video src="{{ media.url }}" muted controls></video>
+       {% when 'external_video' %}
+       <div class="w-full snap-start flex-shrink-0" style="padding-top: {{ 1 | divided_by: media.aspect_ratio | times: 100}}%;" data-media-id="{{ media.id }}">
+         {{ media | external_video_tag: width: 800 | external_video_tag: loading: 'lazy' }}
+       </div>
+       {% when 'video' %}
+       <div class="w-full snap-start flex-shrink-0" data-media-id="{{ media.id }}">
+         {{ media | video_tag: controls: true | video_url: width: 800 | video_tag: loading: 'lazy' }}
+       </div>
        {% endcase %}     
     {% endfor %} 
   </div>
 </div>
 <section class="page-width">
+  {% render 'breadcrumb' %}
   <div class="product grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 sm:gap-6">
     <div class="product__media-wrapper xl:col-span-2 h-max relative">
         <div class="hidden sm:grid grid-cols-2 gap-3">
@@ -33,13 +41,19 @@
                     <div class="media-wrapper border border-gray-200 max-h-max {% if forloop.first or forloop.last and modul == 0 %}col-span-2{% endif %}"> 
                         {{ media | image_url: width:1600 | image_tag: loading: 'lazy' }}             
                     </div>
-                {% when 'video'%}
-                <video src="{{ media.url }}" muted controls></video>        
+                {% when 'external_video' %}
+                    <div class="media-wrapper border border-gray-200 max-h-max {% if forloop.first or forloop.last and modul == 0 %}col-span-2{% endif %}" style="padding-top: {{ 1 | divided_by: media.aspect_ratio | times: 100}}%;" data-media-id="{{ media.id }}">
+                      {{ media | external_video_tag: class:'w-full h-[403px]' }}
+                    </div>
+                {% when 'video' %}
+                    <div class="media-wrapper border border-gray-200 max-h-max {% if forloop.first or forloop.last and modul == 0 %}col-span-2{% endif %}">
+                      {{ media | video_tag: controls: true, class: 'w-full' }}
+                    </div>      
                 {% endcase %}
             {% endfor %}
         </div>
     </div>  
-    <div class="product__info-wrapper pt-6 sticky top-12 self-start">
+    <div class="product__info-wrapper sm:pt-6 sticky top-12 self-start">
       <div id="ProductInfo-{{ section.id }}" x-data="{
           addToCart(){
             let formData = new FormData($refs.product_form);

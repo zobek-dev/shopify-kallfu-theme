@@ -1,4 +1,4 @@
-<header class="border-y py-4">
+<header class="header-container" data-header>
   <div class="page-width">
     <div class="header">
       <div class="header__logo flex justify-center lg:justify-start">
@@ -164,6 +164,10 @@
     if(e.target.matches("#searchLayout")){
     document.querySelector('[x-ref="search"]').removeAttribute('open');
     } 
+  })
+  window.addEventListener('scroll', ()=>{
+    const header = document.querySelector('[data-header]');
+    window.scrollY >= 100 ? header.classList.add('sticky') : header.classList.remove('sticky');
   })
 </script>
 
