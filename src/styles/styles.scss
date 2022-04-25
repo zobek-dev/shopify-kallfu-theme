@@ -137,5 +137,9 @@
     .material-img{
         grid-area: material-img;
     }
+
+    .filter-group[open] > summary > svg{
+        transform: rotate(90deg)
+    }
 }
     

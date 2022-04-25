@@ -1,0 +1,113 @@
+<div class="filters hidden lg:block" 
+    x-data="{loading: false}"
+    @filter-updated.window="$nextTick(()=>{
+        this.loading = true;
+        let currentSearchParams = new URLSearchParams(location.search).toString();
+
+        // Check about search params in url if sort if aplied
+        currentSearchParams.includes('sort_by=')? currentSearchParams = 'sort_by=' + document.querySelector('#sort-by').value : currentSearchParams = '';
+          
+        const queryString = new URLSearchParams(new FormData($refs.filter_form)).toString();
+        currentSearchParams === '' ? url = '/collections/{{ collection.handle }}?' + queryString : url = '/collections/{{ collection.handle }}?' + currentSearchParams + '&' + queryString;
+
+        fetch(url)
+        .then(response => response.text())
+        .then(data => {
+            const div = document.createElement('div');
+            div.innerHTML = data;
+            let pagination = ''
+            let content = div.querySelector('#ProductGridContainer').innerHTML;
+            let activeFilters = div.querySelector('#ActiveFilters').innerHTML;
+            div.querySelector('#Pagination') ? pagination = div.querySelector('#Pagination').innerHTML : ''
+            
+            document.querySelector('#ProductGridContainer').innerHTML = content;
+            document.querySelector('#ActiveFilters').innerHTML = activeFilters;
+            if(document.querySelector('#Pagination')){
+               document.querySelector('#Pagination').innerHTML = pagination;
+            }
+        
+            //update url
+            history.replaceState(null, null, url)
+        })
+        .catch(error => console.error('Error: ', error))
+        .finally(() => this.loading = false)
+    })"
+>
+    {% render 'loader' %}
+    <h3 class="uppercase tracking-[2.5px] text-sm font font-semibold py-4 border-b border-gray-400">Filtrar por:</h3>
+
+    <form class="filter-form divide-y" x-ref="filter_form" id="FiltersForm">
+        {%- for filter in collection.filters -%}
+          <details class="filter-group py-3">
+            <summary class="filter-group-summary flex justify-between items-center text-sm uppercase tracking-[1.5px] cursor-pointer hover:opacity-[0.7]">
+              <div class="flex items-center">
+                <span>{{ filter.label }}</span>
+              </div>
+              {% render 'icon-arrow-right', class: 'w-8' %}
+            </summary>
+      
+            <div class="filter-group-display">     
+              {%- case filter.type -%}
+                {%- when 'boolean' or 'list' -%}
+                  <ul class="filter-group-display__list pt-2">
+                    {%- for filter_value in filter.values -%}
+                      <li class="filter-group-display__list-item py-1 flex space-x-2 items-center">
+                        <input type="checkbox"
+                        class="accent-gray-800 cursor-pointer hover:opacity-[0.7]"
+                        name="{{ filter_value.param_name }}"
+                        value="{{ filter_value.value }}"
+                        @change="$dispatch('filter-updated')"
+                        id="Filter-{{ filter.param_name }}-{{ forloop.index }}"
+                        {% if filter_value.active -%}checked{%- endif %}
+                        {% if filter_value.count == 0 and filter_value.active == false -%}disabled{%- endif %}
+                        >  
+                        <label class="cursor-pointer hover:opacity-[0.7]" for="Filter-{{ filter.param_name }}-{{ forloop.index }}">
+                       {{ filter_value.label }}</label>
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+                {%- when 'price_range' -%}
+                  <div class="filter-group-display__price-range flex items-center justify-between pt-4">
+                    <div class="filter-group-display__price-range-from">
+                        <label for="Filter-{{ filter.max_value.param_name }}" class="text-xs uppercase tracking-[1.5px]">Desde</label>
+                        <div class="border border-gray-400 focus-within:border-gray-900 flex focus-within:border-2 items-center py-1 px-1 space-x-1">
+                            <span>{{ cart.currency.symbol }}</span>
+                            <input name="{{ filter.min_value.param_name }}"
+                            id="Filter-{{ filter.min_value.param_name }}"
+                            {% if filter.min_value.value -%}
+                              value="{{ filter.min_value.value | money_without_currency | replace: ',', '' }}"
+                            {%- endif %}
+                            type="number"
+                            class="focus:border-transparent outline-none"
+                            placeholder="0"
+                            @input.debounce.500ms="$dispatch('filter-updated')"
+                            min="0"
+                            max="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
+                            >
+                        </div> 
+                    </div>
+                    <div class="filter-group-display__price-range-to ">
+                      <label for="Filter-{{ filter.max_value.param_name }}" class="text-xs uppercase tracking-[1.5px]">Hasta</label>
+                      <div class="border border-gray-400 focus-within:border-gray-900 flex focus-within:border-2 items-center py-1 px-1 space-x-1">
+                          <span>{{ cart.currency.symbol }}</span>
+                          <input name="{{ filter.max_value.param_name }}"
+                          id="Filter-{{ filter.max_value.param_name }}"
+                          {% if filter.max_value.value -%}
+                            value="{{ filter.max_value.value | money_without_currency | replace: ',', '' }}"
+                          {%- endif %}
+                          type="number"
+                          class="focus:border-transparent outline-none"
+                          placeholder="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
+                          @input.debounce.500ms="$dispatch('filter-updated')"
+                          min="0"
+                          max="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
+                        >  
+                      </div>
+                    </div>
+                  </div>
+              {%- endcase -%}
+            </div>
+          </details>
+        {%- endfor -%}
+    </form>
+</div>

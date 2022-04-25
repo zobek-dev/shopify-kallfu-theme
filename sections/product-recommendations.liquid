@@ -18,7 +18,7 @@
         <ul class="flex overflow-x-scroll gap-3 snap-x snap-mandatory" x-ref="slider" id="Recommendations">
             {%- for recommendation in recommendations.products -%}
             <li class="product flex-shrink-0 w-[280px] border border-gray-900 snap-start">
-               {% render 'card-product', product: recommendation %}
+               {% render 'card-product', card_product: recommendation %}
             </li>
             {%- endfor -%}
         </ul>

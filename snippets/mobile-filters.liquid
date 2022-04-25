@@ -1,0 +1,133 @@
+<div class="fixed inset-0 overflow-hidden z-20"
+  x-data="{showFilters: false}"
+  x-show="showFilters"
+  @toggle-filters.window="showFilters = !showFilters"
+  aria-labelledby="slide-over-title" 
+  role="dialog" 
+  aria-modal="true"   
+>
+  <div class="absolute inset-0 overflow-hidden">
+    <div class="absolute inset-0 bg-gray-500 bg-opacity-75" x-show="showFilters" x-transition.opacity @click="$dispatch('toggle-filters')" aria-hidden="true"></div>
+    <div class="fixed inset-y-0 right-0 max-w-full flex">
+      <div class="relative w-screen max-w-xs md:max-w-md" 
+        x-show="showFilters"
+        x-transition:enter="transform transition ease-in-out duration-500 sm:duration-700" 
+        x-transition:enter-start="translate-x-full opacity-0" 
+        x-transition:enter-end="translate-x-0 opacity-100" 
+        x-transition:leave="transform transition ease-in-out duration-500 sm:duration-700" 
+        x-transition:leave-start="translate-x-0" 
+        x-transition:leave-end="translate-x-full opacity-0"
+      >
+        <div class="absolute top-0 left-0 -ml-8 pt-4 pr-2 flex sm:-ml-10 sm:pr-4"></div>
+        <div class="h-full flex flex-col bg-white shadow-xl overflow-y-scroll">
+          <div class="px-4 py-8">
+            <div class="flex justify-between items-center">
+              <h2 class="uppercase tracking-[2.5px]">Filtros</h2>
+              <button @click="$dispatch('toggle-filters')">
+              {% render 'icon-close', class:'w-4'%}
+              <span class="sr-only">Cerrar Filtros</span>
+              </button>
+            </div>
+            <div class="mt-10 divide-y">
+              <form class="filter-form divide-y">
+                <div class="overflow-y-scroll h-[70vh]">
+                  {%- for filter in collection.filters -%}
+                  <details class="filter-group py-3">
+                    <summary class="filter-group-summary flex justify-between items-center  tracking-[2.5px] text-sm uppercase">
+                      <div>
+                        <span>{{ filter.label }}</span>
+                      </div>
+                      {% render 'icon-arrow-right', class: 'w-6' %}
+                    </summary>                    
+                    <div class="filter-group-display mt-3">              
+                      {%- case filter.type -%}
+                        {%- when 'boolean' or 'list' -%}
+                          <ul class="filter-group-display__list">
+                            {%- for filter_value in filter.values -%}
+                              <li class="filter-group-display__list-item py-1 flex space-x-2 items-center">
+                                <input type="checkbox"
+                                  name="{{ filter_value.param_name }}"
+                                  value="{{ filter_value.value }}"
+                                  class="accent-gray-800 cursor-pointer hover:opacity-[0.7]"
+                                  id="Filter-{{ filter.param_name }}-{{ forloop.index }}"
+                                  {% if filter_value.active -%}checked{%- endif %}
+                                  {% if filter_value.count == 0 and filter_value.active == false -%}disabled{%- endif %}
+                                >
+                                <label for="Filter-{{ filter.param_name }}-{{ forloop.index }}">{{ filter_value.label }}</label>
+                              </li>
+                            {%- endfor -%}
+                          </ul>
+                        {%- when 'price_range' -%}
+                          <div class="filter-group-display__price-range flex items-center justify-between">
+                            <div class="filter-group-display__price-range-from">
+                              <label for="Filter-{{ filter.min_value.param_name }}" class="text-xs uppercase tracking-[1.5px]">Desde</label>
+                              <div  class="border border-gray-400 focus-within:border-gray-900 flex focus-within:border-2 items-center py-1 px-1 space-x-1">
+                                <span>{{ cart.currency.symbol }}</span>
+                                <input name="{{ filter.min_value.param_name }}"
+                                id="Filter-{{ filter.min_value.param_name }}"
+                                {% if filter.min_value.value -%}
+                                  value="{{ filter.min_value.value | money_without_currency | replace: ',', '' }}"
+                                {%- endif %}
+                                type="number"
+                                class="focus:border-transparent outline-none"
+                                placeholder="0"
+                                min="0"
+                                max="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
+                              >
+                              </div>
+                            </div>
+                            <div class="filter-group-display__price-range-to">
+                              <label for="Filter-{{ filter.max_value.param_name }}" class="text-xs uppercase tracking-[1.5px]">Hasta</label>
+                              <div class="border border-gray-400 focus-within:border-gray-900 flex focus-within:border-2 items-center py-1 px-1 space-x-1">
+                                <span>{{ cart.currency.symbol }}</span>
+                                <input name="{{ filter.max_value.param_name }}"
+                                id="Filter-{{ filter.max_value.param_name }}"
+                                {% if filter.max_value.value -%}
+                                  value="{{ filter.max_value.value | money_without_currency | replace: ',', '' }}"
+                                {%- endif %}
+                                type="number"
+                                placeholder="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
+                                min="0"
+                                max="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
+                                >
+                              </div>
+                            </div>
+                          </div>
+                      {%- endcase -%}
+                    </div>
+                  </details>
+                {%- endfor -%}
+                  <details class="filter-group py-3">
+                    <summary class="filter-group-summary flex justify-between items-center tracking-[2.5px] text-sm uppercase">
+                      <div>
+                        <span>Ordenar</span>
+                      </div>
+                      {% render 'icon-arrow-right', class: 'w-6' %}
+                    </summary>
+                    <ul class="mt-3">
+                      {% for option in collection.sort_options %}
+                        <li class="py-1">
+                          <input type="radio" class="accent-gray-800 cursor-pointer hover:opacity-[0.7]" name="sort_by" value="{{ option.value }}" id="Sort-by-{{ forloop.index }}">
+                          <label for="Sort-by-{{ forloop.index }}">{{ option.name }}</label>
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  </details>
+                </div>
+              
+                <div class="buttons flex justify-center items-center space-x-2 pt-8">
+                  <button type="submit" class="btn-black text-xs">
+                    Filtrar
+                  </button>
+                  <button type="reset" class="btn-transparent text-xs">
+                    Limpiar
+                  </button>
+                </div>
+              </form>                  
+            </div>
+          </div>
+        </div>  
+      </div>
+    </div>   
+  </div>
+</div>

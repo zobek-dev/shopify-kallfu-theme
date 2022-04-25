@@ -1,72 +1,109 @@
-<div class="section-{{ section.id }}-padding">
-   
+<div class="section-{{ section.id }}-padding" id="ProductContainer" x-data> 
   <div>
-    {%- paginate collection.products by 15 -%}
-      {%- if collection.products.size == 0 -%}
-        <div class="collection collection--empty page-width" id="product-grid" data-id="{{ section.id }}">
-          <div class="loading-overlay gradient"></div>
-          <div class="title-wrapper center">
-            <h2 class="title title--primary">
-              {{ 'sections.collection_template.empty' | t }}<br>
-              {{ 'sections.collection_template.use_fewer_filters_html' | t: link: collection.url, class: "underlined-link link" }}
-            </h2>
-          </div>
-        </div>
-      {%- else -%}
-        <div class="page-width">
+    {%- paginate collection.products by 12 -%}
+        <div class="page-width">  
           {% assign sort_by = collection.sort_by | default: collection.default_sort_by %}
-          <div class="flex justify-end pt-4 pb-6"
+          <!--crear una fila para los current filters-->
+          <div class="flex justify-end md:justify-between items-center py-6">
+            <div class=" hidden md:block active-filters" id="ActiveFilters">
+              <a href="{{ collection.url }}?sort_by={{ collection.sort_by }}" class="active-filters__clear bg-[#767676] text-white py-2 px-4 font-semibold rounded-full text-sm  hover:opacity-[0.7]">Quitar todos</a>
+              {%- for filter in collection.filters -%}
+                {%- if filter.type == "price_range" -%}
+                  {%- if filter.min_value.value != nil or filter.max_value.value != nil -%}
+                    <a class="active-filters__remove-filter bg-[#d7d7d7] text-white py-2 px-4 font-semibold rounded-full text-sm  inline-flex space-x-2 items-center hover:opacity-[0.7]" href="{{ filter.url_to_remove }}">
+                      {%- assign min_value = filter.min_value.value | default: 0 -%}
+                      {%- assign max_value = filter.max_value.value | default: filter.range_max -%}
+                      <span>{{ min_value | money }} - {{ max_value | money }}</span>
+                      {% render 'icon-close', class: 'w-3'%}
+                    </a>
+                  {%- endif -%}
+                {%- else -%}
+                  {%- for filter_value in filter.active_values -%}
+                    <a class="active-filters__remove-filter bg-[#d7d7d7] text-white py-2 px-4 font-semibold rounded-full text-sm inline-flex space-x-2 items-center hover:opacity-[0.7]" href="{{ filter_value.url_to_remove }}">
+                      <span>{{ filter.label }}: {{ filter_value.label }}</span>
+                      {% render 'icon-close', class: 'w-3'%}
+                    </a>
+                  {%- endfor -%}
+                {%- endif- %}
+              {%- endfor -%}
+            </div>
+            <div class="hidden lg:flex lg:justify-end"
             x-data="{
               loading: false,
               sort: '{{ sort_by }}',
               sortCollection(){
                 this.loading = true;
-                fetch('{{ collection.handle }}?sort_by=' +  this.sort)
+                let currentSearchParams = new URLSearchParams(location.search).toString();
+                let url='';
+
+                if(currentSearchParams.includes('filter')){
+                  let form = document.querySelector('#FiltersForm');
+                  let queryParam = new URLSearchParams(new FormData(form)).toString();
+                  url = '/collections/{{ collection.handle }}?sort_by=' + this.sort + '&' + queryParam;
+                }else{
+                  url = '/collections/{{ collection.handle }}?sort_by=' +  this.sort;
+                }
+
+                fetch(url)
                 .then(response => response.text())
                 .then(data => {
                   const div = document.createElement('div');
                   div.innerHTML = data;
+                  let pagination = ''
                   const htmlData = div.querySelector('#ProductGridContainer').innerHTML;
+                  const activeFilters = div.querySelector('#ActiveFilters').innerHTML;
+
+                  if(div.querySelector('#Pagination')){
+                    pagination = div.querySelector('#Pagination').innerHTML;
+                  }
+
                   document.querySelector('#ProductGridContainer').innerHTML = htmlData;
-                  history.replaceState(null,null, '?sort_by=' + this.sort);
+                  document.querySelector('#ActiveFilters').innerHTML = activeFilters;
+                  if(document.querySelector('#Pagination')){
+                    document.querySelector('#Pagination').innerHTML = pagination; 
+                  }
+                  history.replaceState(null,null, url);
                 })
                 .catch(error => console.error('Error:', error))
                 .finally(()=> this.loading = false );
               }
-          }">
-          {% render 'loader' %}
+            }">
+            {% render 'loader' %}
             <select id="sort-by" x-model="sort" @change="sortCollection" class="bg-white border border-gray-400 focus:border-gray-800 py-2  cursor-pointer">
-            
               {% for option in collection.sort_options %}
                 <option value="{{ option.value }}" {% if option.value == sort_by %}selected="selected"{% endif %}>
                   {{ option.name }}
                 </option>
               {% endfor %}
             </select>
-          </div>
-          <div class="grid grid-cols-4">
-            <div class="col-span-1">
-              filters
             </div>
-            <ul class="grid grid-cols-2 md:grid-cols-3 gap-4 col-span-3" id="ProductGridContainer">
-              {% for product in collection.products %}
-              <li class="border border-gray-800">
-                {% render 'card-product', product: product %}
-              </li> 
-              {% endfor %}       
-            </ul>
+            <button class="lg:hidden flex space-x-2 border border-[#121212] p-2 uppercase items-center text-xs cursor-pointer hover:opacity-[0.7]" @click="$dispatch('toggle-filters')">
+              <span>Filtrar</span>
+              {% render 'icon-filter', class: 'w-4' %}  
+            </button>           
           </div>
-          
-  
-          {%- if paginate.pages > 1 -%}
-            {% render 'pagination', paginate: paginate, anchor: '' %}
-          {%- endif -%}
+          <div class="grid grid-cols-4 gap-6">
+            <div class="hidden md:block md:sticky md:top-10 md:col-span-1 self-start">
+              {% render 'collection-filters', collection: collection %}              
+            </div>
+            <div class="col-span-4 lg:col-span-3">
+              <ul class="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-4 max-h-max" id="ProductGridContainer">
+                {% for product in collection.products %}
+                <li class="border border-gray-800">
+                  {% render 'card-product', card_product: product %}
+                </li> 
+                {% endfor %}       
+              </ul>
+              {%- if paginate.pages > 1 -%}
+                {% render 'pagination', paginate: paginate, anchor: '' %}
+              {%- endif -%}
+            </div>      
+          </div>
         </div>
-      {%- endif -%}
     {%- endpaginate -%}
   </div>
 </div>
-
+{% render 'mobile-filters' %}
 {% schema %}
 {
   "name": "t:sections.main-collection-product-grid.name",

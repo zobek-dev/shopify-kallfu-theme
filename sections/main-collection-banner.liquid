@@ -2,16 +2,15 @@
 <div class="page-width">
    {% render 'breadcrumb' %}
 </div>
-
 {%- if collection.featured_image != blank -%}
-<div class="relative w-full">
+<div class="relative w-full mb-6">
   <div class="collection-hero__image-container media gradient">
     {{ collection.featured_image | image_url: width:2040 | image_tag: loading: 'lazy' }}
   </div>
   <div class="absolute w-full h-full top-0 left-0 bg-gray-500 bg-opacity-50 flex flex-col justify-center items-center text-white">
-      <h1 class="text-6xl tracking-[8px] uppercase font-bold text-center mb-6">{{ collection.title | escape }}</h1>
+      <h1 class="text-3xl sm:text-6xl tracking-[8px] uppercase font-bold text-center mb-6">{{ collection.title | escape }}</h1>
       {% if collection.metafields.my_fields.subtitle_text != blank %}
-        <h2 class="text-3xl tracking-[2.5px] text-center mb-6">
+        <h2 class="text-xl md:text-3xl tracking-[2.5px] text-center mb-6">
             {{ collection.metafields.my_fields.subtitle_text }}
         </h2> 
       {% endif %}
@@ -19,13 +18,11 @@
 </div>
 {%- else -%}
     <div class="page-width text-center">
-        <h1 class="text-2xl tracking-[2.5px] font-bold uppercase">{{ collection.title | escape }}</h1>  
+        <h1 class="text-base tracking-[2.5px] font-bold uppercase">{{ collection.title | escape }}</h1>  
     </div>
 {%- endif -%}
 {%- if collection.description != blank -%}
-    <div class="page-width">
-        <p class="text-base tracking-[1.5px] mt-6">
-            {{ collection.description }}
-        </p>
+    <div class="page-width text-base tracking-[1.5px] mt-6">
+        {{ collection.description }}
     </div>
 {%- endif -%}

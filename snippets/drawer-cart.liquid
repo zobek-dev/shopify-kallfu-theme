@@ -16,11 +16,6 @@
               $dispatch('cart-count-updated', cartCount);
               this.loading = false;
           })
-      },
-      onKeyup(e){
-        if(e.key === 'Escape'){
-          $dispatch('cart-updated');
-        }
       }
    }"
   x-show="showCartDrawer"
@@ -32,7 +27,7 @@
 >
   <div class="absolute inset-0 overflow-hidden">
     
-    <div class="absolute inset-0 bg-gray-500 bg-opacity-75" x-show="showCartDrawer" x-transition.opacity @click="$dispatch('toggle-cart')" aria-hidden="true"  @keyup="onKeyup"></div>
+    <div class="absolute inset-0 bg-gray-500 bg-opacity-75" x-show="showCartDrawer" x-transition.opacity @click="$dispatch('toggle-cart')" aria-hidden="true"></div>
     <div class="fixed inset-y-0 right-0 max-w-full flex">
      
       <div class="relative w-screen max-w-xs md:max-w-md" 
@@ -43,7 +38,7 @@
           x-transition:leave="transform transition ease-in-out duration-500 sm:duration-700" 
           x-transition:leave-start="translate-x-0" 
           x-transition:leave-end="translate-x-full opacity-0"
-          >
+      >
         <div class="absolute top-0 left-0 -ml-8 pt-4 pr-2 flex sm:-ml-10 sm:pr-4"></div>
         
         {% render 'loader' %}

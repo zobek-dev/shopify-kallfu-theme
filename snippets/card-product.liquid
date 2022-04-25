@@ -1,26 +1,40 @@
-<a href="{{ product.url }}">
-    <div class="card w-full">
-        <div class="w-full relative">
-            <img
-            class="product__img"
-            src="{{ product.featured_image | image_url: width: 300 }}"
-            alt="{{ product.featured_image.alt }}"
-            loading="lazy"
-            width="100%"
-            />
+<a href="{{ card_product.url }}">
+    <div class="card w-full group">
+        <div class="relative">
+            {{ card_product.featured_media | image_url: width:900 | image_tag: loading: lazy, class: 'group-hover:hidden' }}
+            {% if card_product.media[1] != blank %}
+            {{ card_product.media[1] | image_url: width:900 | image_tag: loading: lazy, class: 'hidden group-hover:block' }} 
+            {% endif %}
+            {% if card_product.price < card_product.compare_at_price_max %}
+            {% assign porcentage = card_product.compare_at_price_max | minus:card_product.price | times:100 | divided_by:card_product.compare_at_price_max %}
+            <span class="absolute right-2 top-2 bg-[#00abdd] text-white font-bold leading-none text-base md:text-xl tracking-[1.5px] p-1">
+               {{ porcentage }}%<br>
+               OFF. 
+            </span>
+            {% endif %}
+            {% if card_product.available == false %}
+            <span class="absolute left-2 bottom-2 bg-[#121212] text-white font-bold leading-none text-base md:text-xl tracking-[1.5px] p-1">
+                OUT
+            </span>      
+            {% endif %}
+            {% if card_product.available and card_product.tags contains 'new' or card_product.tags contains 'NEW' %}
+            <span class="absolute left-2 bottom-2 bg-[#00abdd] text-white font-bold leading-none text-base md:text-xl tracking-[1.5px] p-1">
+                NEW
+            </span>      
+            {% endif %}
         </div>
         <div class="py-4 px-4">
-            {% render 'shipping-color-snippet', tags: product.tags, size: 'text-[10px]', product_id: product.selected_or_first_available_variant.id %}
-            <p class="uppercase tracking-[1.5px] text-sm mb-2">{{ product.title }}</p>
+            {% render 'shipping-color-snippet', tags: card_product.tags, size: 'text-[10px]', product_id: card_product.selected_or_first_available_variant.id %}
+            <p class="uppercase tracking-[1.5px] text-xs md:text-sm mb-2">{{ card_product.title }}</p>
             
-            {% if product.price < product.compare_at_price_max %}
-            <div class="flex gap-4 items-center">
-                <p class="text-xl tracking-[1.5px] font-bold">{{ product.price | money}}</p>
-                <s class="text-xs">{{ product.compare_at_price_max | money }}</s>       
+            {% if card_product.price < card_product.compare_at_price_max %}
+            <div class="text-left">
+                <p class="text-sm md:text-xl tracking-[1.5px] font-bold inline-flex">{{ card_product.price | money}}</p>
+                <s class="text-[10px] md:text-sm inline-flex">{{ card_product.compare_at_price_max | money }}</s>       
             </div>
             {% else %}
             <div class="flex">
-                <p class="text-xl tracking-[1.5px] font-bold">{{ product.price | money}}</p>   
+                <p class="text-base md:text-xl tracking-[1.5px] font-bold">{{ card_product.price | money}}</p>   
             </div>    
             {% endif %}     
         </div>
