@@ -8,6 +8,7 @@ export default ()=> ({
     },
     to(strategy){
         let slider = this.$refs.slider;
+        console.log(slider)
         let current = slider.scrollLeft;
         let offset = slider.firstElementChild.getBoundingClientRect().width;
         slider.scrollTo({ left: strategy(current, offset), behavior: 'smooth' });

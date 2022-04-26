@@ -3039,6 +3039,7 @@ __webpack_require__.r(__webpack_exports__);
     },
     to: function to(strategy) {
       var slider = this.$refs.slider;
+      console.log(slider);
       var current = slider.scrollLeft;
       var offset = slider.firstElementChild.getBoundingClientRect().width;
       slider.scrollTo({

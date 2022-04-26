@@ -1,33 +1,55 @@
 {% assign id_name = 'add-to-cart-' | append: product.handle | append: '-' | append: collection.handle | append: '-' | append: section.id %}
 
-<div class="w-full relative" x-data="Slider">
-  <button class="block sm:hidden text-3xl font-medium absolute top-1/2 transform -translate-y-1/2 left-0 bg-gray-200 opacity-1/2 p-2 z-10 cursor-pointer" @click="prev" >
+<div class="w-full relative" x-data="{
+  skip:1,
+  next(){
+    this.to((current, offset) => current - (offset * this.skip));
+  },
+  prev(){
+    this.to((current, offset) => current + (offset * this.skip));
+  },
+  to(strategy){
+    let slider = this.$refs.carousel;
+    let current = slider.scrollLeft;
+    let offset = slider.firstElementChild.getBoundingClientRect().width;
+    slider.scrollTo({ left: strategy(current, offset), behavior:'smooth' });
+  },
+  focusableWhenVisible:{
+    'x-intersect:enter'(){
+      this.$el.removeAttribute('tabindex');
+    },
+    'x-intesect:leave'(){
+      this.$el.setAttribute('tabindex', '-1');
+    },
+  }
+}">
+  <button class="hidden sm:hidden text-3xl font-medium absolute top-1/2 transform -translate-y-1/2 left-0 bg-gray-200 opacity-1/2 p-2 z-10 cursor-pointer" @click="prev">
     <span aria-hidden><</span>
     <span class="sr-only">Anterior</span>
   </button>
-  <button class="block sm:hidden text-3xl font-medium absolute top-1/2 transform -translate-y-1/2 right-0 bg-gray-200 opacity-1/2 p-2 z-10 cursor-pointer" @click="next">
+  <button class="hidden sm:hidden text-3xl font-medium absolute top-1/2 transform -translate-y-1/2 right-0 bg-gray-200 opacity-1/2 p-2 z-10 cursor-pointer" @click="next">
     <span aria-hidden>></span>
     <span class="sr-only">Siguiente</span>
   </button>
-  <div class="flex sm:hidden overflow-x-scroll gap-3 relative snap-x snap-mandatory"  x-ref="slider">
+  <ul class="flex sm:hidden overflow-x-scroll gap-3 relative snap-x snap-mandatory"  x-ref="carousel" id="Carousel">
     {% render 'breadcrumb' %}        
     {% for media in product.media %}
        {% case media.media_type %} 
        {% when 'image' %}
-       <div class="w-full snap-start flex-shrink-0">
+       <li class="w-full snap-start flex-shrink-0">
          {{ media | image_url: width:800 | image_tag: loading: 'lazy' }}
-       </div>
+       </li>
        {% when 'external_video' %}
-       <div class="w-full snap-start flex-shrink-0" style="padding-top: {{ 1 | divided_by: media.aspect_ratio | times: 100}}%;" data-media-id="{{ media.id }}">
+       <li class="w-full snap-start flex-shrink-0" style="padding-top: {{ 1 | divided_by: media.aspect_ratio | times: 100}}%;" data-media-id="{{ media.id }}">
          {{ media | external_video_tag: width: 800 | external_video_tag: loading: 'lazy' }}
-       </div>
+       </li>
        {% when 'video' %}
-       <div class="w-full snap-start flex-shrink-0" data-media-id="{{ media.id }}">
+       <li class="w-full snap-start flex-shrink-0" data-media-id="{{ media.id }}">
          {{ media | video_tag: controls: true | video_url: width: 800 | video_tag: loading: 'lazy' }}
-       </div>
+       </li>
        {% endcase %}     
     {% endfor %} 
-  </div>
+  </ul>
 </div>
 <section class="page-width">
   {% render 'breadcrumb' %}

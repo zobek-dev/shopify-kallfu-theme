@@ -34,11 +34,12 @@
     input[type=number] {
       -moz-appearance: textfield;
     }
-
+    #Carousel::-webkit-scrollbar,
     #Recommendations::-webkit-scrollbar{
       display:none;
     }
 
+    #Carousel,
     #Recommendations{
       -ms-overflow-style: none;  
       scrollbar-width: none; 
