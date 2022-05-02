@@ -1,0 +1,116 @@
+{{ 'swiper.min.css' | asset_url | stylesheet_tag }}
+<div class="swiper">
+    <ul class="swiper-wrapper">
+        {% for block in section.blocks %}
+        {% assign item = block.settings %}
+        <li class="swiper-slide">
+            {% if item.url != blank %}
+            <a href="{{ item.url }}">   
+            {% endif %}
+                <picture class="w-full">
+                    <source media="(min-width: 799px)" srcset="{{ item.image_desktop | img_url: '2040x' }}">
+                    <source media="(min-width: 450px)" srcset="{{ item.image_tablet | img_url: '800x' }}">
+                    <source media="(min-width: 150px)" srcset="{{ item.image_mobile | img_url: '500x' }}">
+                    <img src="{{ item.image_desktop | img_url: '2040x' }}" alt="{{ item.alt_text }}" laading="lazy">
+                </picture>
+            {% if item.url != blank %}
+            </a>
+            {% endif %}  
+        </li>
+        {% endfor %}
+    </ul>
+      <!-- If we need pagination -->
+    <div class="swiper-pagination"></div>
+
+    <!-- If we need navigation buttons -->
+    <div class="swiper-button-prev hidden md:block"></div>
+    <div class="swiper-button-next hidden md:block"></div>
+</div>
+
+
+
+{% schema %}
+{
+    "name":"carousel",
+    "max_blocks":10,
+    "blocks":[
+        {
+            "name": "Slide",
+            "type": "slide",
+            "settings": [
+                {
+                    "type": "image_picker",
+                    "id": "image_desktop",
+                    "label": "Imagen en Escritorio"
+                },
+                {
+                    "type": "image_picker",
+                    "id": "image_tablet",
+                    "label": "Imagen en Tablet"
+                },
+                {
+                    "type": "image_picker",
+                    "id": "image_mobile",
+                    "label": "Imagen en Mobile"
+                },
+                {
+                    "type": "url",
+                    "id": "url",
+                    "label": "Link para slide"
+                },
+                {
+                    "type": "text",
+                    "id": "alt_text",
+                    "label": "Texto alternativo"
+                }
+            ]
+        }
+    ]
+}
+{% endschema %}
+{% comment %}
+<div x-data="{
+    current: 0,
+    Carousel(){
+        this.updateSort($refs.carousel);     
+    },
+    updateSort(el){
+        const scrollWidth = el.scrollWidth;
+        const scrollLeft= el.scrollLeft;
+        const width = el.offsetWidth;
+        const items = el.children;
+
+        if(scrollLeft <= width){
+            el.prepend(items[items.length - 1]);
+            el.scrollLeft = scrollLeft + width;
+        }
+        if(scrollWidth - scrollLeft <= width){
+            el.append(items[0]);
+            el.scrollLeft = scrollLeft - width;
+        }
+    }
+}">
+
+<ul class="flex overflow-x-scroll snap-x snap-mandatory p-0" x-ref="carousel" @scroll="Carousel">
+     {% for block in section.blocks %}
+        {% assign item = block.settings %}
+        <li class="flex-shrink-0 snap-start w-full carousel-item" id="Carousel-Item-{{ forloop.index }}">
+            <a href="{{ item.url }}">
+                <picture class="w-full">
+                    <source media="(min-width: 799px)" srcset="{{ item.image_desktop | img_url: '2040x' }}">
+                    <source media="(min-width: 450px)" srcset="{{ item.image_tablet | img_url: '800x' }}">
+                    <source media="(min-width: 150px)" srcset="{{ item.image_mobile | img_url: '500x' }}">
+                    <img src="{{ item.image_desktop | img_url: '2040x' }}" alt="" laading="lazy">
+                </picture>
+            </a>  
+        </li>
+     {% endfor %}
+   </ul>
+   <nav class="flex space-x-4 justify-center py-4">
+       {% for block in section.blocks %}
+            <a href="#Carousel-Item-{{ forloop.index }}" class="block w-[0.8rem] h-[0.8rem] bg-gray-400 rounded-full"></a>
+       {% endfor %}
+   </nav>
+</div>
+
+{% endcomment %}

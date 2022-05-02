@@ -2,6 +2,7 @@
     x-data="{loading: false}"
     @filter-updated.window="$nextTick(()=>{
         this.loading = true;
+        let url='';
         let currentSearchParams = new URLSearchParams(location.search).toString();
 
         // Check about search params in url if sort if aplied

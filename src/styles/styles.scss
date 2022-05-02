@@ -69,6 +69,10 @@
         }
     }
     
+    :root {
+        --swiper-navigation-color: white !important;
+        --swiper-theme-color: white !important;
+    }
     
     details[open] > summary > svg.icon-caret{
         transform: rotate(180deg);
@@ -144,3 +148,10 @@
     }
 }
     
+
+.swiper-pagination-bullet {
+    opacity: .5; /*was 0.2 and was impossible to see on some background images*/
+}
+.swiper-pagination-bullet-active {
+    background: #ffffff;
+}

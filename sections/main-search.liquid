@@ -1,230 +1,249 @@
 
-<div class="template-search{% unless search.performed and search.results_count > 0 %} template-search--empty{% endunless %} section-{{ section.id }}-padding">
-    <div class="template-search__header page-width center">
-      {%- if search.performed -%}
+{% liquid 
+   assign sort_by = search.sort_by | default: search.default_sort_by 
+%}
+<div x-data>
+  <div class="page-width">
+    <div class="flex">
+      <div class="tracking-[1.5px] text-base">
+        {%- if search.performed -%}
         <h1 class="h2">{{ 'templates.search.title' | t }}</h1>
-      {%- else -%}
-        <h1 class="h2">{{ 'general.search.search' | t }}</h1>
-      {%- endif -%}
-      {% comment %}
-      <div class="template-search__search">
-        {%- if settings.predictive_search_enabled -%}
-          <predictive-search data-loading-text="{{ 'accessibility.loading' | t }}">
-        {%- endif -%}
-          <form action="{{ routes.search_url }}" method="get" role="search" class="search">
-            <div class="field">
-              <input
-                class="search__input field__input"
-                id="Search-In-Template"
-                type="search"
-                name="q"
-                value="{{ search.terms | escape }}"
-                placeholder="{{ 'general.search.search' | t }}"
-                {%- if settings.predictive_search_enabled -%}
-                  role="combobox"
-                  aria-expanded="false"
-                  aria-owns="predictive-search-results-list"
-                  aria-controls="predictive-search-results-list"
-                  aria-haspopup="listbox"
-                  aria-autocomplete="list"
-                  autocorrect="off"
-                  autocomplete="off"
-                  autocapitalize="off"
-                  spellcheck="false"
-                {%- endif -%}
-              >
-              <label class="field__label" for="Search-In-Template">{{ 'general.search.search' | t }}</label>
-              <input name="options[prefix]" type="hidden" value="last">
-  
-              {%- if settings.predictive_search_enabled -%}
-                <div class="predictive-search predictive-search--search-template" tabindex="-1" data-predictive-search>
-                  <div class="predictive-search__loading-state">
-                    <svg aria-hidden="true" focusable="false" role="presentation" class="spinner" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
-                      <circle class="path" fill="none" stroke-width="6" cx="33" cy="33" r="30"></circle>
-                    </svg>
-                  </div>
-                </div>
-  
-                <span class="predictive-search-status visually-hidden" role="status" aria-hidden="true"></span>
-              {%- endif -%}
-  
-              <button type="submit" class="search__button field__button" aria-label="{{ 'general.search.search' | t }}">
-                <svg class="icon icon-search">
-                  <use xlink:href="#icon-search">
-                </svg>
-              </button>
-            </div>
-          </form>
-        {%- if settings.predictive_search_enabled -%}
-          </predictive-search>
-        {%- endif -%}
-  
-      </div>
-      {% endcomment %}
-      {%- if search.performed -%}
-        {%- unless section.settings.enable_filtering or section.settings.enable_sorting -%}
-          {%- if search.results_count > 0 -%}
-            <p role="status">{{ 'templates.search.results_with_count_and_term' | t: terms: search.terms, count: search.results_count }}</p>
-          {%- endif -%}
-        {%- endunless -%}
+        {% if search.results_count > 0 %}
+          <p role="status">{{ 'templates.search.results_with_count_and_term' | t: terms: search.terms, count: search.results_count }}</p>
+        {% endif %}
         {%- if search.results_count == 0 and search.filters == empty -%}
           <p role="status">{{ 'templates.search.no_results' | t: terms: search.terms }}</p>
         {%- endif -%}
-      {%- endif -%}
-    </div>
-    <div class="page-width">
-        <div class="grid grid-cols-4 gap-4">
-            {%- if search.performed -%}
-            {%- if search.filters != empty -%}
-                <div class="hidden md:block col-span-1">
-                    <h2>Filtrar por:</h2>
-                    <form class="filter-form">
-                        <input type="hidden" name="q" value="{{ search.terms }}">
-                      
-                        {%- for filter in search.filters -%}
-                          <details class="filter-group">
-                            <summary class="filter-group-summary">
-                              <div>
-                                <span>{{ filter.label }}</span>
-                      
-                                {%- if filter.active_values.size > 0 -%}
-                                  <span>({{ filter.active_values.size }})</span>
-                                {%- endif -%}
-                              </div>
-                            </summary>
-                      
-                            <div class="filter-group-display">
-                              <div class="filter-group-display__header">
-                                <span class="filter-group-display__header-selected">{{ filter.active_values.size }} selected</span>
-                      
-                                {%- if filter.active_values.size > 0 -%}
-                                  <a href="{{ filter.url_to_remove }}" class="filter-group-display__header-reset">Reset</a>
-                                {%- endif -%}
-                              </div>
-                      
-                              {%- case filter.type -%}
-                                {%- when 'boolean' or 'list' -%}
-                                  <ul class="filter-group-display__list">
-                                    {%- for filter_value in filter.values -%}
-                                      <li class="filter-group-display__list-item">
-                                        <label for="Filter-{{ filter.param_name }}-{{ forloop.index }}">
-                                        <input type="checkbox"
-                                          name="{{ filter_value.param_name }}"
-                                          value="{{ filter_value.value }}"
-                                          id="Filter-{{ filter.param_name }}-{{ forloop.index }}"
-                                          {% if filter_value.active -%}checked{%- endif %}
-                                          {% if filter_value.count == 0 and filter_value.active == false -%}disabled{%- endif %}
-                                        >{{ filter_value.label }}</label>
-                                      </li>
-                                    {%- endfor -%}
-                                  </ul>
-                      
-                                  <div class="filter-group-display__submit">
-                                    <input type="submit" value="Apply">
-                                  </div>
-                                {%- when 'price_range' -%}
-                                  <div class="filter-group-display__price-range">
-                                    <div class="filter-group-display__price-range-from">
-                                      <span>{{ cart.currency.symbol }}</span>
-                      
-                                      <input name="{{ filter.min_value.param_name }}"
-                                        id="Filter-{{ filter.min_value.param_name }}"
-                                        {% if filter.min_value.value -%}
-                                          value="{{ filter.min_value.value | money_without_currency | replace: ',', '' }}"
-                                        {%- endif %}
-                                        type="number"
-                                        placeholder="0"
-                                        min="0"
-                                        max="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
-                                      >
-                      
-                                      <label for="Filter-{{ filter.min_value.param_name }}">From</label>
-                                    </div>
-                                    <div class="filter-group-display__price-range-to">
-                                      <span>{{ cart.currency.symbol }}</span>
-                      
-                                      <input name="{{ filter.max_value.param_name }}"
-                                        id="Filter-{{ filter.max_value.param_name }}"
-                                        {% if filter.max_value.value -%}
-                                          value="{{ filter.max_value.value | money_without_currency | replace: ',', '' }}"
-                                        {%- endif %}
-                                        type="number"
-                                        placeholder="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
-                                        min="0"
-                                        max="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
-                                      >
-                      
-                                      <label for="Filter-{{ filter.max_value.param_name }}">To</label>
-                                    </div>
-                                  </div>
-                      
-                                  <div class="filter-group-display__submit">
-                                    <input type="submit" value="Apply">
-                                  </div>
-                              {%- endcase -%}
-                            </div>
-                          </details>
-                        {%- endfor -%}
-                      
-                        <div class="active-filters">
-                          <a href="{{ routes.search_url }}?sort_by={{ search.sort_by }}&q={{ search.terms }}" class="active-filters__clear">Clear all</a>
-                      
-                          {%- for filter in search.filters -%}
-                            {%- if filter.type == "price_range" -%}
-                              {%- if filter.min_value.value != nil or filter.max_value.value != nil -%}
-                                <a class="active-filters__remove-filter" href="{{ filter.url_to_remove }}">
-                                  {%- assign min_value = filter.min_value.value | default: 0 -%}
-                                  {%- assign max_value = filter.max_value.value | default: filter.range_max -%}
-                                  {{ min_value | money }} - {{ max_value | money }} X
-                                </a>
-                              {%- endif -%}
-                            {%- else -%}
-                              {%- for filter_value in filter.active_values -%}
-                                <a class="active-filters__remove-filter" href="{{ filter_value.url_to_remove }}">
-                                  {{ filter.label }}: {{ filter_value.label }} X
-                                </a>
-                              {%- endfor -%}
-                            {%- endif- %}
-                          {%- endfor -%}
-                        </div>
-                      </form>  
-                </div>
-
+        {%- else -%}
+          <h1 class="h2">{{ 'general.search.search' | t }}</h1>
+        {%- endif -%}
+      </div>
+    </div>   
+  </div>
+  <div class="page-width hidden md:block">
+    <div class="flex justify-between items-center py-6">
+      <div class="active-filters flex space-x-2 space-y-2">
+        <a href="{{ routes.search_url }}?sort_by={{ search.sort_by }}&q={{ search.terms }}" class="active-filters__clear bg-[#767676] text-white py-2 px-4 font-semibold rounded-full text-sm hover:opacity-[0.7]">Limpiar Filtros</a>
+    
+        {%- for filter in search.filters -%}
+          {%- if filter.type == "price_range" -%}
+            {%- if filter.min_value.value != nil or filter.max_value.value != nil -%}
+              <a class="active-filters__remove-filter bg-[#d7d7d7] text-white py-2 px-4 font-semibold rounded-full text-sm  inline-flex space-x-2 items-center hover:opacity-[0.7]" href="{{ filter.url_to_remove }}">
+                {%- assign min_value = filter.min_value.value | default: 0 -%}
+                {%- assign max_value = filter.max_value.value | default: filter.range_max -%}
+                <span>{{ min_value | money }} - {{ max_value | money }}</span>
+                {% render 'icon-close', class: 'w-3'%}
+              </a>
             {%- endif -%}
-            <div id="ProductGridContainer" class="col-span-4 md:col-span-3">
-              {%- if search.results.size == 0 and search.filters != empty -%}
-                <div class="template-search__results collection collection--empty page-width" id="product-grid" data-id="{{ section.id }}">
-                  <div class="title-wrapper center">
-                    <h2 class="title title--primary">
-                      {{ 'sections.collection_template.empty' | t }}<br>
-                      {{ 'sections.collection_template.use_fewer_filters_html' | t: link: search_url, class: "underlined-link link" }}
-                    </h2>
-                  </div>
-                </div>
-              {%- else -%}
-                {% paginate search.results by 12 %}
-                    <ul class="grid grid-cols-2 md:grid-cols-3 gap-2 w-full" role="list">
-                        {%- for item in search.results -%}
-                            <li class="grid__item border border-[#121212]">
-                                {%- case item.object_type -%}
-                                {%- when 'product' -%}
-                                    {% render 'card-product', card_product: item %}
-                                {%- endcase -%}
-                            </li>
-                        {%- endfor -%}
-                    </ul>
-                    {%- if paginate.pages > 1 -%}
-                        {% render 'pagination', paginate: paginate %}
-                    {%- endif -%}
-                {% endpaginate %}
-              {%- endif -%}
-            </div>
-          {%- endif -%}
-        </div>
+          {%- else -%}
+            {%- for filter_value in filter.active_values -%}
+              <a class="active-filters__remove-filter bg-[#d7d7d7] text-white py-2 px-4 font-semibold rounded-full text-sm  inline-flex space-x-2 items-center hover:opacity-[0.7]" href="{{ filter_value.url_to_remove }}">
+                <span>{{ filter.label }}: {{ filter_value.label }}</span>
+                {% render 'icon-close', class: 'w-3'%}
+              </a>
+            {%- endfor -%}
+          {%- endif- %}
+        {%- endfor -%}
+      </div>
+      <div x-data="{
+        loading: false,
+        sort: '{{ sort_by }}',
+        sortCollection(){
+          this.loading = true;
+          let currentSearchParams = new URLSearchParams(location.search).toString();
+          let url = '';
+          if(currentSearchParams.includes('filter')){
+            let queryParam = new URLSearchParams(new FormData($refs.filter_search)).toString();
+            url = '/search?q=escr&options%5Bprefix%5D=last&sort_by=' + this.sort + '&' + queryParam;
+          }else{
+            url = '/search?q=escr&options%5Bprefix%5D=last&sort_by=' +  this.sort;
+          }
+          fetch(url)
+          .then(response => response.text())
+          .then(data => {
+            const div = document.createElement('div');
+            div.innerHTML = data;
+            let pagination = '';
+            const gridData = div.querySelector('#SearchGrid').innerHTML;
+            console.log(gridData)
+            if(div.querySelector('#Pagination')){
+              pagination = div.querySelector('#Pagination').innerHTML;
+            }
+            document.querySelector('#SearchGrid').innerHTML = gridData;
+            if(document.querySelector('#Pagination'))document.querySelector('#Pagination').innerHTML = pagination;
+            history.replaceState(null, null, url);
+          })
+          .catch(error => console.error('Error: ', error))
+          .finally(() => this.loading = false)
+        }
+      }">
+        <select id="sort_by" x-model="sort" @change="sortCollection" class="hidden md:block bg-white border border-gray-400 focus:border-gray-800 py-2  cursor-pointer">
+          {% for option in search.sort_options %}
+          <option value="{{ option.value | escape }}" {% if option.value == sort_by %} selected="selected"{% endif %}>
+            {{ option.name | escape }}
+          </option> 
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="page-width block md:hidden">
+    <div class="py-6">
+      <button class="lg:hidden flex space-x-2 border tracking-[1.5px] border-[#121212] p-2 uppercase items-center text-xs cursor-pointer hover:opacity-[0.7]" @click="$dispatch('toggle-filters')">
+        <span>Filtrar y Ordenar</span>
+        {% render 'icon-filter', class: 'w-4' %} 
+      </button>
     </div>
     
-   
   </div>
+  <div class="page-width">
+      <div class="grid grid-cols-4 gap-6">
+          {%- if search.performed -%}
+          {%- if search.filters != empty -%}
+            <div class="hidden md:block md:sticky md:top-10 md:col-span-1 self-start">
+              <div class="filters hidden lg:block pt-16 pb-20" 
+                x-data="{
+                  loading:false
+                }"
+                @search-filter.window="$nextTick(() => { 
+                  this.loading = true;
+                  //let currentSearchParams = new URLSearchParams(location.search).toString();
+                  const queryString = new URLSearchParams(new FormData($refs.filter_search)).toString();
+                  let url = '/search?q=escr&options%5Bprefix%5D=last&sort_by=' + document.querySelector('#sort_by').value + '&' + queryString;
+                  fetch(url)
+                  .then(response => response.text())
+                  .then(data => {
+                    let pagination = ''
+                    const div = document.createElement('div');
+                    div.innerHTML = data;
+                    const grid = div.querySelector('#SearchGrid').innerHTML;
+                    if(div.querySelector('#Pagination')){
+                      pagination = div.querySelector('#Pagination').innerHTML;
+                    }
+                    document.querySelector('#SearchGrid').innerHTML = grid;
+                    document.querySelector('#Pagination').innerHTML = pagination;
+                    history.replaceState(null, null, url)
+                  })
+                  .catch(error => console.error('Error: ', error))
+                  .finally(() => this.loading = false)
+                });"
+              >
+                {% render 'loader' %}
+                <h2 class="uppercase tracking-[2.5px] text-sm font font-semibold py-4 border-b border-gray-400">Filtrar por:</h2>
+                <form class="filter-form divide-y" x-ref="filter_search" id="SearchFilter">
+                    <input type="hidden" name="q" value="{{ search.terms }}">
+                  
+                    {%- for filter in search.filters -%}
+                      <details class="filter-group py-3">
+                        <summary class="filter-group-summary flex justify-between items center text-sm uppercase tracking-[1.5px] cursor-pointer hover:opacity-[0.7]">
+                          <div>
+                            <span>{{ filter.label }}</span>
+                          </div>
+                          {% render 'icon-arrow-right', class: 'w-8' %}
+                        </summary>
+                  
+                        <div class="filter-group-display">
+                          {%- case filter.type -%}
+                            {%- when 'boolean' or 'list' -%}
+                              <ul class="filter-group-display__list pt-2">
+                                {%- for filter_value in filter.values -%}
+                                  <li class="filter-group-display__list-item py-1 flex space-x-2 items-center">
+                                    <input type="checkbox"
+                                      name="{{ filter_value.param_name }}"
+                                      value="{{ filter_value.value }}"
+                                      class="accent-gray-800 cursor-pointer hover:opacity-[0.7]"
+                                      id="Filter-{{ filter.param_name }}-{{ forloop.index }}"
+                                      @change="$dispatch('search-filter')"
+                                      {% if filter_value.active -%}checked{%- endif %}
+                                      {% if filter_value.count == 0 and filter_value.active == false -%}disabled{%- endif %}>
+                                    <label class="cursor-pointer hover:opacity-[0.7]" for="Filter-{{ filter.param_name }}-{{ forloop.index }}">{{ filter_value.label }}</label>
+                                  </li>
+                                {%- endfor -%}
+                              </ul>
+                            {%- when 'price_range' -%}
+                              <div class="filter-group-display__price-range flex items-center justify-between pt-4">
+                                <div class="filter-group-display__price-range-from">
+                                  <label class="text-xs uppercase tracking-[1.5px]" for="Filter-{{ filter.min_value.param_name }}">Desde</label>
+                                  <div class="border border-gray-400 focus-within:border-gray-900 flex focus-within:border-2 items-center py-1 px-1 space-x-1">
+                                    <span>{{ cart.currency.symbol }}</span>
+                                    <input name="{{ filter.min_value.param_name }}"
+                                    id="Filter-{{ filter.min_value.param_name }}"
+                                    {% if filter.min_value.value -%}
+                                      value="{{ filter.min_value.value | money_without_currency | replace: ',', '' }}"
+                                    {%- endif %}
+                                    type="number"
+                                    placeholder="0"
+                                    @input.debounce.500ms="$dispatch('search-filter')"
+                                    class="focus:border-transparent outline-none"
+                                    min="0"
+                                    max="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
+                                    >
+                                  </div>  
+                                </div>
+                                <div class="filter-group-display__price-range-to">
+                                  <label class="text-xs uppercase tracking-[1.5px]" for="Filter-{{ filter.max_value.param_name }}">Hasta</label>
+                                  <div class="border border-gray-400 focus-within:border-gray-900 flex focus-within:border-2 items-center py-1 px-1 space-x-1">
+                                    <span>{{ cart.currency.symbol }}</span>
+                                    <input name="{{ filter.max_value.param_name }}"
+                                    id="Filter-{{ filter.max_value.param_name }}"
+                                    {% if filter.max_value.value -%}
+                                      value="{{ filter.max_value.value | money_without_currency | replace: ',', '' }}"
+                                    {%- endif %}
+                                    type="number"
+                                    placeholder="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
+                                    @input.debounce.500ms="$dispatch('search-filter')"
+                                    class="focus:border-transparent outline-none"
+                                    min="0"
+                                    max="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
+                                    >
+                                  </div>  
+                                </div>
+                              </div>
+                          {%- endcase -%}
+                        </div>
+                      </details>
+                    {%- endfor -%}
+                </form>
+              </div>      
+            </div>
+          {%- endif -%}
+          <div id="ProductGridContainer" class="col-span-4 md:col-span-3">
+            {%- if search.results.size == 0 and search.filters != empty -%}
+              <div class="template-search__results collection collection--empty page-width" id="product-grid" data-id="{{ section.id }}">
+                <div class="title-wrapper center">
+                  <h2 class="title title--primary">
+                    {{ 'sections.collection_template.empty' | t }}<br>
+                    {{ 'sections.collection_template.use_fewer_filters_html' | t: link: search_url, class: "underlined-link link" }}
+                  </h2>
+                </div>
+              </div>
+            {%- else -%}
+              {% paginate search.results by 12 %}
+                  <ul class="grid grid-cols-2 md:grid-cols-3 gap-2 w-full" role="list" id="SearchGrid">
+                      {%- for item in search.results -%}
+                          <li class="grid__item border border-[#121212]">
+                              {%- case item.object_type -%}
+                              {%- when 'product' -%}
+                                  {% render 'card-product', card_product: item %}
+                              {%- endcase -%}
+                          </li>
+                      {%- endfor -%}
+                  </ul>
+                  {%- if paginate.pages > 1 -%}
+                      {% render 'pagination', paginate: paginate %}
+                  {%- endif -%}
+              {% endpaginate %}
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      </div>
+  </div>
+</div>
+{% render 'mobile-search-filters', search: search %}
+
+{% comment %}
+render the filters for search page
+{% endcomment %}
 
 {% schema %}
 {

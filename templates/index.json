@@ -1,11 +1,11 @@
 {
     "sections":{
-        "main": {
-            "type": "main-index",
+        "carousel": {
+            "type": "carousel",
             "settings": {}
-        },
-        "order": [
-            "main"
-        ]
-    }
-}
+        }
+    },
+    "order": [
+        "carousel"
+    ]
+} 
