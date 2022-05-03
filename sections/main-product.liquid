@@ -2,10 +2,10 @@
 
 <div class="w-full relative" x-data="{
   skip:1,
-  next(){
+  prev(){
     this.to((current, offset) => current - (offset * this.skip));
   },
-  prev(){
+  next(){
     this.to((current, offset) => current + (offset * this.skip));
   },
   to(strategy){
@@ -23,11 +23,11 @@
     },
   }
 }">
-  <button class="hidden sm:hidden text-3xl font-medium absolute top-1/2 transform -translate-y-1/2 left-0 bg-gray-200 opacity-1/2 p-2 z-10 cursor-pointer" @click="prev">
+  <button class="hidden sm:block text-3xl font-medium absolute top-1/2 transform -translate-y-1/2 left-0 bg-gray-200 opacity-1/2 p-2 z-10 cursor-pointer" @click="prev">
     <span aria-hidden><</span>
     <span class="sr-only">Anterior</span>
   </button>
-  <button class="hidden sm:hidden text-3xl font-medium absolute top-1/2 transform -translate-y-1/2 right-0 bg-gray-200 opacity-1/2 p-2 z-10 cursor-pointer" @click="next">
+  <button class="hidden sm:block text-3xl font-medium absolute top-1/2 transform -translate-y-1/2 right-0 bg-gray-200 opacity-1/2 p-2 z-10 cursor-pointer" @click="next">
     <span aria-hidden>></span>
     <span class="sr-only">Siguiente</span>
   </button>

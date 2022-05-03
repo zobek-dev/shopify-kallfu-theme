@@ -1,0 +1,62 @@
+<div class="pb-12" x-data="{
+    skip:1,
+    prev(){
+      this.to((current, offset) => current - (offset * this.skip));
+    },
+    next(){
+      this.to((current, offset) => current + (offset * this.skip));
+    },
+    to(strategy){
+      let slider = this.$refs.products_slider;
+      let current = slider.scrollLeft;
+      let offset = slider.firstElementChild.getBoundingClientRect().width;
+      slider.scrollTo({ left: strategy(current, offset), behavior:'smooth' });
+    },
+    focusableWhenVisible:{
+      'x-intersect:enter'(){
+        this.$el.removeAttribute('tabindex');
+      },
+      'x-intesect:leave'(){
+        this.$el.setAttribute('tabindex', '-1');
+      },
+    }
+}">
+    <div class="page-width">
+        <div class="flex md:justify-between flex-col  md:flex-row md:items-center py-4 gap-2">
+            <h2 class="uppercase text-xl tracking-[2.5px] text-center">Productos destacados</h2>
+            <div class="controls flex justify-end space-x-2">
+                <button @click="prev">
+                    {% render 'icon-arrow', class: 'rotate-180 w-8' %}
+                    <span class="sr-only">Anterior</span>
+                </button>
+                <button @click="next">
+                    {% render 'icon-arrow', class: 'w-8' %}
+                    <span class="sr-only">Siguiente</span>
+                </button>
+            </div>
+        </div>   
+        <ul class="flex overflow-x-scroll gap-3 snap-x snap-mandatory no-scrollbar" x-ref="products_slider">
+            {{ section.settings.featured_collection }}
+            {% assign featured_products = collections[section.settings.featured_collection].products %}
+            {% for featured_product in featured_products %}
+            <li class="product flex-shrink-0 w-[280px] border border-gray-900 snap-start">
+                {% render 'card-product', card_product: featured_product %}
+            </li>
+            {% endfor %}
+        </ul> 
+    </div>
+    
+</div>
+
+{% schema %}
+{
+    "name":"Productos Destacados",
+    "settings":[
+        {
+            "type":"collection",
+            "id": "featured_collection",
+            "label": "Seleccione la colección destacada" 
+        }
+    ]
+}
+{% endschema %}

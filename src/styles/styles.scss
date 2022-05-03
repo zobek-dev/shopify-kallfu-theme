@@ -35,12 +35,14 @@
       -moz-appearance: textfield;
     }
     #Carousel::-webkit-scrollbar,
-    #Recommendations::-webkit-scrollbar{
+    #Recommendations::-webkit-scrollbar,
+    .no-scrollbar::-webkit-scrollbar {
       display:none;
     }
 
     #Carousel,
-    #Recommendations{
+    #Recommendations, 
+    .no-scrollbar{
       -ms-overflow-style: none;  
       scrollbar-width: none; 
     }

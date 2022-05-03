@@ -2,10 +2,28 @@
     "sections":{
         "carousel": {
             "type": "carousel",
+            "settings": {},
+            "blocks":{
+
+            }
+        },
+        "icons-slider":{
+            "type": "icons-slider",
             "settings": {}
+        },
+        "featured-collections": {
+            "type":"featured-collections",
+            "settings":{}
+        },
+        "featured-products":{
+            "type": "featured-products",
+            "settings":{}
         }
     },
     "order": [
-        "carousel"
+        "carousel",
+        "icons-slider",
+        "featured-collections",
+        "featured-products"
     ]
 } 

@@ -1,0 +1,39 @@
+<div class="page-width">
+    <div class="pt-4 pb-10 md:pt-10">
+        <h2 class="uppercase text-xl tracking-[2.5px] text-center mb-8">Categorías Destacadas</h2>
+        <ul class="grid grid-cols-6 gap-4">
+            {% for block in section.blocks %}
+            {% assign collection_handler = block.settings.collection %}
+            {% assign featured_collection = collections[collection_handler] %}
+                <li class="col-span-6 {% if forloop.index == 1 or forloop.index == 2 %}md:col-span-3{% else %}md:col-span-2{% endif %} relative group overflow-hidden transition-all">
+                    {{ featured_collection.featured_image | image_url: width: '600x' | image_tag: alt: featured_collection.title, loading: 'lazy', class: 'object-cover w-full group-hover:scale-105 transition-all' }}
+                    <a href="{{ featured_collection.url }}" class="bg-gray-500/50 absolute w-full h-full flex justify-end items-end top-0 left-0 p-4 text-white">
+                        <p class="uppercase text-base tracking-[2.5px] font-bold flex space-x-2 group-hover:underline group-hover:underline-offset-2">
+                           <span>{{ featured_collection.title | escape }}</span> 
+                           {% render 'icon-arrow', class: 'w-6' %}
+                        </p>
+                    </a>
+                </li> 
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% schema %}
+{
+    "name": "Collecciones Destacadas",
+    "max_blocks": 5,
+    "blocks":[
+        {
+            "name": "Collecciones Destacadas",
+            "type": "list",
+            "settings": [
+                {
+                    "type": "collection",
+                    "id": "collection",
+                    "label": "Selecciona una colección"
+                }
+            ]
+        }
+    ]
+}
+{% endschema %}
