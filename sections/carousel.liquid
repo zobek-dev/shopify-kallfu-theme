@@ -8,10 +8,10 @@
             <a href="{{ item.url }}">   
             {% endif %}
                 <picture class="w-full">
-                    <source media="(min-width: 799px)" srcset="{{ item.image_desktop | img_url: '2040x' }}">
+                    <source media="(min-width: 799px)" srcset="{{ item.image_desktop | img_url: 'master' }}">
                     <source media="(min-width: 450px)" srcset="{{ item.image_tablet | img_url: '800x' }}">
                     <source media="(min-width: 150px)" srcset="{{ item.image_mobile | img_url: '500x' }}">
-                    <img src="{{ item.image_desktop | img_url: '2040x' }}" alt="{{ item.alt_text }}" laading="lazy">
+                    <img src="{{ item.image_desktop | img_url: 'master' }}" alt="{{ item.alt_text }}" laading="lazy" class="w-full">
                 </picture>
             {% if item.url != blank %}
             </a>

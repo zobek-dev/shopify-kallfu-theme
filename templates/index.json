@@ -18,12 +18,22 @@
         "featured-products":{
             "type": "featured-products",
             "settings":{}
+        },
+        "home-text":{
+            "type": "home-text",
+            "settings":{}
+        },
+        "home-medida":{
+            "type": "home-medida",
+            "settings": {}
         }
     },
     "order": [
         "carousel",
         "icons-slider",
         "featured-collections",
-        "featured-products"
+        "featured-products",
+        "home-text",
+        "home-medida"
     ]
 } 

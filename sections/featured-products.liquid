@@ -39,7 +39,7 @@
             {{ section.settings.featured_collection }}
             {% assign featured_products = collections[section.settings.featured_collection].products %}
             {% for featured_product in featured_products %}
-            <li class="product flex-shrink-0 w-[280px] border border-gray-900 snap-start">
+            <li class="product flex-shrink-0 w-[280px] border border-gray-900 snap-start pb-4 flex flex-col justify-between">
                 {% render 'card-product', card_product: featured_product %}
             </li>
             {% endfor %}

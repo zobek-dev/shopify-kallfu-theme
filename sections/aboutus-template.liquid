@@ -1,0 +1,225 @@
+<div>
+    <div class="relative mb-8">
+        {% if section.settings.hero_desktop != blank %}
+        <picture>
+            <source media="(min-width: 800px)" srcset="{{ section.settings.hero_desktop | img_url: 'master' }}">
+            <source media="(min-width: 150px)" srcset="{{ section.settings.hero_mobile | img_url: 'master' }}">
+            <img src="{{ section.settings.hero_desktop | img_url: 'master' }}" alt="somos kallfü" class="w-full" loading="lazy">
+        </picture>          
+        {% endif %}
+        <div class="absolute top-0 left-0 text-white flex flex-col justify-center items-center w-full h-full">
+            <h1 class="text-center">
+                <span class="uppercase tracking-[2.5px] font-bold text-2xl md:text-4xl">Somos</span><br>
+                <span class="uppercase tracking-[2.5px] font-bold text-6xl md:text-8xl">KALLFÜ</span><br>
+                <span class="uppercase tracking-[2.5px] font-bold text-2xl md:text-4xl">handmade</span>
+            </h1>
+        </div>
+    </div>
+    <div class="page-width">
+        <h2 class="font-semibold tracking-[2.5px] text-xl md:text-2xl text-center mb-12">SOMOS UN TALLER MOBILIARIO NACIONAL CON <span class="text-[#00abdd]">DISEÑOS SIMPLES Y DEMOCRÁTICOS,</span> FABRICADOS CON MATERIALES DURADEROS Y DE CALIDAD.</h2>
+    </div>
+    <div class="pl-[10%] md:pl-[20%] mb-8">
+        <div class="w-full h-40 bg-slate-500">
+          <img src="" alt="">  
+        </div>
+        <div class="pr-[5%] md:pr-[30%] pt-8">
+            {% render 'icon-manos', class: 'w-12 h-12' %} 
+            <h2 class="text-xl md:text-2xl uppercase tracking-[4px] pt-4 pb-6 font-bold">
+                Nuestra <span class="text-[#00abdd]">Historia</span>
+            </h2>
+            <p class="tracking-[1.5px]">
+            KALLFÜ es un taller mobiliario que nace a principios del año 2020 con el fin de optimizar espacios reducidos, en aquel momento el enfoque fue directamente en fabricar escritorios para personas que necesitaban armar su home office debido a la pandemia mundial. Desde ese punto comenzamos a expandir nuestra variedad de productos, hoy en día contamos con tres líneas diferentes. Nuestra colección MIMA destaca por las terminaciones de su cubierta que gracias a un arduo proceso realizado por nuestro equipo nos entrega un acabado natural, fino y suave al tacto en el que se logra exhibir las propiedades de la madera utilizada en su elaboración. Por otro lado creamos una colección para los amantes del blanco y negro, la línea BLACK & WHITE entrega la misma funcionalidad característica de todos nuestros muebles, en esta ocasión su cubierta tienen el mismo acabado mencionado anteriormente pero en tono blanco y negro, entregando mayor sofisticación y estilo. Y por último nuestra reciente COLECCIÓN METAL confeccionada 100% de acero de carbón pensada en dar un estilo más industrial a tus espacios favoritos. En diciembre del año 2021 abrimos nuestro showroom para las personas que gusten de ver nuestros productos en exhibición.  
+            </p>
+        </div>    
+    </div>
+    <div class="page-width">
+        <h2 class="font-semibold tracking-[2.5px] text-xl md:text-2xl text-center">
+            TRABAJAMOS DIARIAMENTE PARA ENTREGAR LA MEJOR ATENCIÓN Y GARANTIZAR LA SATISFACCIÓN DE NUESTROS CLIENTES.
+        </h2>
+    </div>
+    <div class="page-width" x-data="{
+        skip:1,
+        prev(){
+          this.to((current, offset) => current - (offset * this.skip));
+        },
+        next(){
+          this.to((current, offset) => current + (offset * this.skip));
+        },
+        to(strategy){
+          let slider = this.$refs.icon_slider;
+          let current = slider.scrollLeft;
+          let offset = slider.firstElementChild.getBoundingClientRect().width;
+          slider.scrollTo({ left: strategy(current, offset), behavior:'smooth' });
+        },
+        focusableWhenVisible:{
+          'x-intersect:enter'(){
+            this.$el.removeAttribute('tabindex');
+          },
+          'x-intesect:leave'(){
+            this.$el.setAttribute('tabindex', '-1');
+          },
+        }
+    }">
+        <div class="py-6 relative">
+            <ul class="flex overflow-x-scroll snap-x snap-mandatory no-scrollbar" x-ref="icon_slider">
+                <li class="flex-shrink-0 w-[335px] flex items-center space-x-3 justify-center md:justify-start snap-start">
+                  {% render 'icon-atencion', class: 'w-[36px] h-[36px]'%} 
+                  <span class="text-sm tracking-[1.5px]">
+                    Atención de Calidad
+                  </span>
+                </li>
+                <li class="flex-shrink-0 w-[335px] flex items-center space-x-3 justify-center md:justify-start snap-start">
+                  {% render 'icon-democratico', class: 'w-[36px] h-[36px]'%} 
+                  <span class="text-sm tracking-[1.5px]">
+                    Diseño Democratico
+                  </span>
+                </li>  
+                <li class="flex-shrink-0 w-[335px] flex items-center space-x-3 justify-center md:justify-start snap-start">
+                  {% render 'icon-garantia', class: 'w-[36px] h-[36px]'%} 
+                  <span class="text-sm tracking-[1.5px]">
+                    Garantía de satisfacción
+                  </span>
+                </li>
+                <li class="flex-shrink-0 w-[335px] flex items-center space-x-3 justify-center md:justify-start snap-start">
+                  {% render 'icon-fabricacion', class: 'w-[36px] h-[336x]'%} 
+                  <span class="text-sm tracking-[1.5px]">
+                    Fabricación manual
+                  </span>
+                </li>     
+            </ul>
+            <button class="absolute block sm:hidden top-1/2 left-0 -translate-y-1/2" @click="prev">
+                {% render 'icon-arrow-right', class: 'rotate-180' %}
+                <span class="sr-only">Anterior</span>
+            </button>
+            <button class="absolute block sm:hidden top-1/2 right-0 -translate-y-1/2" @click="next">
+                {% render 'icon-arrow-right', class: '' %}
+                <div class="sr-only">Siguiente</div>
+            </button>
+        </div>
+    </div>
+    <div>
+        <div class="pr-[5%]">
+            <video 
+            src="https://cdn.shopify.com/s/files/1/0511/7879/9287/files/EDIT_Cuadrado.mp4?v=1633096637" 
+            autoplay 
+            muted
+            playsinline 
+            loop></video>
+        </div>
+    </div>
+    <div class="page-width">
+        <p class="text-left text-xl tracking-[1.5px] font-bold my-8 md:pr-[35%]">
+            FABRICAMOS & DESPACHAMOS NUESTROS PRODUCTOS, PREOCUPÁNDONOS DE CADA DETALLE EN SU PROCESO  DE FABRICACIÓN Y LLEGUE EN PERFECTAS CONDICIONES A TU HOGAR.  
+        </p>
+    </div>
+    <div class="page-width">
+        <div class="valores">
+            <div class="valores-text">
+                <h2 class="font-semibold text-xl tracking-[2.5px] mb-4">VALORES <span class="text-[#00abdd]">KALLFÜ</span></h2>
+                <p class="tracking-[1.5px]">
+                    Uno de los conceptos que nos inspira e impulsa a seguir expandiendo tanto nuestra variedad de productos como la línea de estos, es fabricar muebles basados en un diseño democrático, con esto apuntamos a un diseño accesible que logre abarcar una mayor cantidad de personas, considerando la forma, calidad, funcionalidad, sostenibilidad y mantener un equilibrio en la relación calidad y precio. Como equipo también buscamos brindar una excelente atención a cada uno de nuestros clientes, lo cual ha sido reconocido por cada persona que ha adquirido alguno de nuestros productos.
+                </p>
+            </div>
+            <div class="valores-img bg-slate-500 w-full h-[300px] ">
+            </div>
+        </div>
+    </div>
+
+    <div class="page-width" x-data="{
+        skip:1,
+        prev(){
+          this.to((current, offset) => current - (offset * this.skip));
+        },
+        next(){
+          this.to((current, offset) => current + (offset * this.skip));
+        },
+        to(strategy){
+          let slider = this.$refs.member_slider;
+          let current = slider.scrollLeft;
+          let offset = slider.firstElementChild.getBoundingClientRect().width;
+          slider.scrollTo({ left: strategy(current, offset), behavior:'smooth' });
+        },
+        focusableWhenVisible:{
+            'x-intersect:enter'(){
+              this.$el.removeAttribute('tabindex');
+            },
+            'x-intesect:leave'(){
+              this.$el.setAttribute('tabindex', '-1');
+            },
+        }    
+    }">
+        <h2 class="tracking-[2.5px] text-base md:text-xl text-center font-semibold mb-4">EQUIPO <span class="text-[#00abdd]">KALLFÜ</span></h2>
+        <div class="relative mb-12">
+            <ul class="flex overflow-x-scroll snap-x snap-mandatory md:grid  md:grid-cols-2 lg:grid-cols-3  gap-4" x-ref="member_slider">
+                {% for block in section.blocks %}
+                    {% assign member = block.settings %}
+                    <li class="border flex-shrink-0 w-full md:col-span-1 p-4 snap-start">
+                        {% if member.image != blank %}
+                        <div class="overflow-hidden w-full rounded-[50%]">
+                            <img src="{{ member.image | img_url: '500x' }}" alt="{{ member.name }}"     loading="lazy" width="{{ member.image.width }}" height="{{ member.image.width }}    " class="object-cover object-center w-full">  
+                         </div>     
+                        {% endif %}
+                       {% if member.name != blank %}
+                       <h3 class="text-center capitalize tracking-[1.5px] text-2xl py-2">
+                          {{ member.name }}
+                       </h3>    
+                       {% endif %}
+                       {% if member.role != blank %}
+                          <p class="uppercase text-center text-base tracking-[1.5px] font-bold">{{ member.  role }}</p>
+                       {% endif %} 
+                    </li>
+                {% endfor %}        
+            </ul>
+            <button class="block md:hidden absolute top-1/2 left-0 -translate-y-1/2 bg-gray-400/20 text-white" @click="prev">
+               {% render 'icon-arrow-right' , class: 'w-12 h-12 rotate-180' %}
+               <span class="sr-only">Anterior</span>
+            </button>
+            <button class="block md:hidden absolute top-1/2 right-0 -translate-y-1/2 bg-gray-400/20 text-white" @click="next">
+                {% render 'icon-arrow-right' , class: 'w-12 h-12' %}
+                <span class="sr-only">Siguiente</span>
+            </button>
+        </div>    
+    </div>
+</div>
+
+
+{% schema %}
+{
+    "name": "Nosotros",
+    "settings":[
+       {
+           "type": "image_picker",
+           "id": "hero_desktop",
+           "label": "Imagen para el hero en desktop"
+       },
+       {
+           "type": "image_picker",
+           "id": "hero_mobile",
+           "label": "Imagen para el hero en mobile"
+       } 
+    ],
+    "blocks":[
+       {
+           "name": "Equipo Kallfu",
+           "type": "slide",
+           "settings": [
+                {
+                  "type": "image_picker",
+                  "id": "image",
+                  "label": "Agregar la imagen de un miembro"   
+                },
+                {
+                   "type": "text",
+                   "id": "name",
+                   "label": "Nombre del miembro del equipo" 
+                },
+                {
+                    "type": "text",
+                    "id": "role",
+                    "label": "Rol del miembro del equipo"
+                }
+            ]
+       }
+    ]
+}
+{% endschema %}

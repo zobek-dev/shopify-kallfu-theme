@@ -1,7 +1,12 @@
 <a href="{{ card_product.url }}">
-    <div class="card w-full group">
+    <div class="card w-full group transition-all ease-in-out">
         <div class="relative">
-            {{ card_product.featured_media | image_url: width:900 | image_tag: loading: 'lazy', class: 'group-hover:hidden' }}
+            {% if card_product.media[1] != blank %}
+            {% assign class_main = 'group-hover:hidden' %}
+            {% else %}
+            {% assign class_main = '' %}      
+            {% endif %}
+            {{ card_product.featured_media | image_url: width:900 | image_tag: loading: 'lazy', class: class_main }}
             {% if card_product.media[1] != blank %}
             {{ card_product.media[1] | image_url: width:900 | image_tag: loading: 'lazy', class: 'hidden group-hover:block' }} 
             {% endif %}
@@ -41,6 +46,12 @@
     </div>
 </a>
 {% if card_product.available and request.page_type == 'index' %}
+{% comment %}
+ Component Cart: 
+
+ @addToCart function come from drawer cart component in drawer-cart.liquid snippet, this component trigger the two events cart-updated who fetch cart template in every cart event update and toggle cart event who trigger the open and close action of the drawer cart.
+
+{% endcomment %}
 <div x-data="{
      addToCart(){
         let formData = new FormData(this.$refs.card_product_form)

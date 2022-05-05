@@ -8,7 +8,6 @@
   },
   to(strategy){
     let slider = this.$refs.icon_slider;
-    console.log(slider)
     let current = slider.scrollLeft;
     let offset = slider.firstElementChild.getBoundingClientRect().width;
     slider.scrollTo({ left: strategy(current, offset), behavior:'smooth' });
@@ -24,20 +23,31 @@
 }">
     <div class="py-6 relative">
         <ul class="flex overflow-x-scroll snap-x snap-mandatory no-scrollbar" x-ref="icon_slider">
-            {% for block in section.blocks %}
-               {% assign icon = block.settings %}
-               <li class="flex-shrink-0 w-[335px] flex items-center space-x-3 justify-center md:justify-start snap-start">
-                 <img src="{{ icon.icon_image | img_url: '50x' }}" 
-                 alt="{{ icon.icon_text }}" 
-                 loading="lazy" 
-                 width="30" 
-                 heading="30"
-                 >   
-                 <span class="text-sm tracking-[1.5px]">
-                     {{ icon.icon_text }}
-                 </span>
-               </li> 
-            {% endfor %}
+          <li class="flex-shrink-0 w-[335px] flex items-center space-x-3 justify-center md:justify-start snap-start">
+            {% render 'icon-atencion', class: 'w-[36px] h-[36px]'%} 
+            <span class="text-sm tracking-[1.5px]">
+              Atención de Calidad
+            </span>
+          </li>
+          <li class="flex-shrink-0 w-[335px] flex items-center space-x-3 justify-center md:justify-start snap-start">
+            {% render 'icon-democratico', class: 'w-[36px] h-[36px]'%} 
+            <span class="text-sm tracking-[1.5px]">
+              Diseño Democratico
+            </span>
+          </li>  
+          <li class="flex-shrink-0 w-[335px] flex items-center space-x-3 justify-center md:justify-start snap-start">
+            {% render 'icon-garantia', class: 'w-[36px] h-[36px]'%} 
+            <span class="text-sm tracking-[1.5px]">
+              Garantía de satisfacción
+            </span>
+          </li>
+          <li class="flex-shrink-0 w-[335px] flex items-center space-x-3 justify-center md:justify-start snap-start">
+            {% render 'icon-fabricacion', class: 'w-[36px] h-[336x]'%} 
+            <span class="text-sm tracking-[1.5px]">
+              Fabricación manual
+            </span>
+          </li>
+           
         </ul>
         <button class="absolute block sm:hidden top-1/2 left-0 -translate-y-1/2" @click="prev">
             {% render 'icon-arrow-right', class: 'rotate-180' %}
@@ -53,24 +63,6 @@
 {% schema %}
 {
     "name": "icons-slider",
-    "max_blocks": 4,
-    "blocks": [
-        {
-            "name": "Slide",
-            "type": "slide",
-            "settings": [
-                {
-                    "type":"image_picker",
-                    "id": "icon_image",
-                    "label":"Icono" 
-                },
-                {
-                    "type":"text",
-                    "id": "icon_text",
-                    "label": "El texto del icono"
-                }
-            ]
-        }
-    ]
+    "settings": []
 }
 {% endschema %}
